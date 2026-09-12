@@ -337,6 +337,27 @@ input,textarea{font-family:inherit}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--block-gap)}
 .topbar .gear{background:none;color:var(--text-secondary);font-size:22px;padding:4px}
 .wl-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+
+/* ============ v0.3 · 新手引导卡（可关闭，关闭后不再出现） ============ */
+.guide-card{
+  border:1px solid var(--accent-gold);background:rgba(201,162,39,.07);
+  border-radius:var(--r-card);padding:var(--card-padding);margin-bottom:var(--card-gap);
+}
+.guide-card h2{margin-bottom:8px}
+.guide-card ol{margin:0 0 8px 18px;color:var(--text-primary);font-size:var(--fs-body)}
+.guide-card ol li{margin-bottom:6px}
+.guide-card .guide-close{
+  background:none;border:none;color:var(--text-secondary);
+  font-size:var(--fs-caption);padding:4px 0;text-decoration:underline;
+}
+/* ============ v0.3 · 反馈导出可见文本框（微信兜底：长按全选复制） ============ */
+.export-area{
+  width:100%;height:220px;margin:12px 0;padding:12px;
+  background:var(--bg-night,#0E1A2F);color:var(--text-primary);
+  border:1px solid var(--border-subtle);border-radius:var(--r-input);
+  font-size:12px;line-height:1.6;resize:none;white-space:pre;
+}
+.export-tip{color:var(--accent-gold);font-size:var(--fs-caption);margin-top:8px}
 </style>
 </head>
 <body>
@@ -364,7 +385,7 @@ input,textarea{font-family:inherit}
       <p class="caption" style="margin-top:8px">本页面为 S1 切片演示环境，全部内容为演示数据，不会读取你的任何真实信息。</p>
     </div>
     <button class="btn-primary" onclick="go('s-register')">开始体验</button>
-    <div class="footer-ai">SPEC-S1-sandbox v0.2.1 · 对应 S1 切片（假数据真体验）</div>
+    <div class="footer-ai">SPEC-S1-sandbox v0.3 · 白话引导版 · 对应 S1 切片（假数据真体验）</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（模拟） ================= -->
@@ -433,7 +454,7 @@ input,textarea{font-family:inherit}
     <h2 style="margin:var(--block-gap) 0 12px">今日一条主建议</h2>
     <div class="card">
       <span class="pill pill-data" style="margin-bottom:8px">观察档</span>
-      <p id="main-advice" style="margin-top:8px">数据显示你本周 deep sleep 偏少，今晚或许值得早点放下手机。</p>
+      <p id="main-advice" style="margin-top:8px">数据显示你本周深度睡眠偏少，今晚或许值得早点放下手机。</p>
       <p class="caption" style="margin-top:8px">一个参考视角，采不采纳由你。</p>
     </div>
     <!-- 体感打分：点击即提交，无二次确认 -->
@@ -494,17 +515,28 @@ input,textarea{font-family:inherit}
     <!-- Tab · 今日 -->
     <div class="tabpage" id="tab-today">
       <div id="main-sync-slot"></div>
+      <!-- v0.3 新手引导卡：告诉第一次来的人「现在该干嘛」；关闭后不再出现 -->
+      <div class="guide-card" id="today-guide" style="display:none">
+        <h2>第一次来？可以这样玩 👇</h2>
+        <ol>
+          <li>先看下面两张卡片——这是「棱镜」每天早上会给你的东西：你身体的状态 + 一句参考建议。</li>
+          <li>点底部「时机」，看看今天什么时段适合做什么；那里还藏着一个「玄机模式」，可以去翻翻。</li>
+          <li>任何瞬间有感觉——喜欢、看不懂、不舒服——点右下角金色「✎ 记一笔感受」，你的感受会直接变成产品改进。</li>
+        </ol>
+        <button class="guide-close" onclick="dismissGuide()">知道了，不再显示</button>
+      </div>
       <div id="today-normal">
-        <h2 style="margin-bottom:12px">今日</h2>
+        <h2 style="margin-bottom:4px">今日</h2>
+        <p class="caption" style="margin-bottom:12px">每天早上，棱镜把你的身体数据翻译成两张卡：发生了什么、或许可以怎么做。</p>
         <div class="card">
           <span class="pill pill-data" style="margin-bottom:8px">观察档</span>
-          <p style="margin-top:8px">数据显示你本周 deep sleep 偏少，今晚或许值得早点放下手机。</p>
-          <p class="caption" style="margin-top:8px">演示数据 · ◔ 置信度：中</p>
+          <p style="margin-top:8px">数据显示你本周深度睡眠偏少，今晚或许值得早点放下手机。</p>
+          <p class="caption" style="margin-top:8px">演示数据 · 把握程度：中等（它会明说自己的把握有多大）</p>
         </div>
         <div class="card">
-          <span class="pill pill-aligned" style="margin-bottom:8px">双轨印证 · 高置信</span>
+          <span class="pill pill-aligned" style="margin-bottom:8px">两条线索指向一致 · 把握较高</span>
           <p style="margin-top:8px">未来两天看起来适合低强度恢复：早点休息，把重要决定往后排一排。</p>
-          <p class="caption" style="margin-top:8px">预演，不是预言 · 仅为参考视角</p>
+          <p class="caption" style="margin-top:8px">这是预演，不是预言 · 采不采纳由你</p>
         </div>
       </div>
       <!-- 降级态演示：证据不足卡（禁白屏） -->
@@ -523,27 +555,28 @@ input,textarea{font-family:inherit}
 
     <!-- Tab · 时机 -->
     <div class="tabpage" id="tab-timing">
-      <h2 style="margin-bottom:12px">时机窗口</h2>
+      <h2 style="margin-bottom:4px">时机窗口</h2>
+      <p class="caption" style="margin-bottom:12px">今天什么时段适合做什么——身体数据说一套，传统历法说一套，两相对照着看。</p>
       <!-- 玄机模式入口：低调、不诱导（独立天窗 · 有门的房间） -->
       <button class="xj-entry" onclick="openXj()">
         <span>◈ 玄机模式</span>
-        <span class="caption">独立天窗 · 退出不留痕</span>
+        <span class="caption">今日宜忌、合盘、择时这类「推演」都在这个独立房间里 · 有次数上限 · 退出不留痕</span>
       </button>
-      <p class="caption" style="margin-bottom:12px">标注证据来源：单源证据 = 只有一条轨道看到；双轨印证 = 两条轨道指向一致。</p>
+      <p class="caption" style="margin-bottom:12px">卡片右上角的小标签：「单源证据」= 只有一条线索看到；「两条线索指向一致」= 身体数据和历法窗口重合，把握更高。</p>
       <div class="card">
         <div class="wl-row">
           <div>
             <p style="font-weight:600">今晚 21:00–23:00 · 休整窗口</p>
-            <p class="caption" style="margin-top:4px">数据轨恢复趋势与玄机轨收敛时段重合，看起来适合早点收尾。</p>
+            <p class="caption" style="margin-top:4px">身体数据说你在恢复，历法窗口也指向收敛——两边都建议今晚早点收尾。</p>
           </div>
-          <span class="pill pill-aligned">双轨印证</span>
+          <span class="pill pill-aligned">两条线索一致</span>
         </div>
       </div>
       <div class="card">
         <div class="wl-row">
           <div>
             <p style="font-weight:600">明日 09:00–11:00 · 专注窗口</p>
-            <p class="caption" style="margin-top:4px">仅数据轨：你的 HRV 上午通常较高，专注类工作或许更顺。</p>
+            <p class="caption" style="margin-top:4px">仅身体数据：你的心率变异性上午通常较高，专注类工作或许更顺。</p>
           </div>
           <span class="pill pill-data">单源证据</span>
         </div>
@@ -552,7 +585,7 @@ input,textarea{font-family:inherit}
         <div class="wl-row">
           <div>
             <p style="font-weight:600">周四 14:00–16:00 · 沟通窗口</p>
-            <p class="caption" style="margin-top:4px">仅玄机轨：时段气机外放，适合表达与协商。预演，不是预言。</p>
+            <p class="caption" style="margin-top:4px">仅历法窗口：时段气机外放，适合表达与协商。预演，不是预言。</p>
           </div>
           <span class="pill pill-fate">单源证据</span>
         </div>
@@ -610,7 +643,8 @@ input,textarea{font-family:inherit}
     <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
       <p class="caption">这是 AETHEL 棱镜的体验沙箱，对应 S1 切片规格（SPEC-S1）。全部内容为演示数据，不读取任何真实信息，用于 Demo Day 用户体验测试。含玄机模式概念演示（待评审提案 V0.1）。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.2.1（朋友体验版）</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.3（朋友体验版 · 白话引导版）</p>
+      <p class="caption" style="margin-top:4px">v0.3 更新：新增新手引导卡；今日/时机/玄机门厅文案全部白话化；反馈导出改为「可见文本框 + 一键复制」，微信里不再丢文件。</p>
     </div>
     <div class="card">
       <div class="auth-row">
@@ -627,14 +661,16 @@ input,textarea{font-family:inherit}
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
     <button class="btn-ghost" style="color:var(--semantic-alert)" onclick="resetJourney()">重置旅程（清除昵称/同步率/镜灵状态）</button>
-    <div class="footer-ai">SPEC-S1-sandbox v0.1 · 深色唯一主题</div>
+    <div class="footer-ai">SPEC-S1-sandbox v0.3 · 深色唯一主题</div>
   </section>
 
-  <!-- ================= 屏 9 · 玄机模式门厅（独立天窗，v0.2） ================= -->
+  <!-- ================= 屏 9 · 玄机模式门厅（独立天窗，v0.3 白话化） ================= -->
   <section class="screen-xj" id="s-xj-lobby">
-    <div class="xj-reminder">以下为视角与时机参考，不是预言</div>
+    <div class="xj-reminder">这里给的只是参考视角，不是预言</div>
     <h1 style="margin-bottom:4px">玄机模式</h1>
-    <p class="caption" style="margin-bottom:var(--block-gap)">一个有门的房间。端侧推演，预算记账只在这台设备上；退出后，首页不会留下你来过的痕迹。</p>
+    <p style="color:var(--text-secondary);margin-bottom:8px">今日宜忌、姻缘合盘、数字能量、起名择时……中国人熟悉的那些「推演」，都收在这个单独的房间里。</p>
+    <p class="caption" style="margin-bottom:8px">为什么单独开个房间？因为这类事要有节制：每天能推演的次数有限，用完就得明天再来——这个上限<strong style="color:var(--accent-gold)">花钱也买不了</strong>。你的生辰等信息只在这台设备上算，算完即焚；离开这个房间，首页不会留下任何痕迹。</p>
+    <p class="caption" style="margin-bottom:var(--block-gap)">三档玩法：「轻推演」随口看看（每天 3 次）；「中推演」认真问一件事（每周 3 次，答完要交一次感受回执）；「重推演」问大事（每月 2 次，要先有你的数据打底才开盘）。</p>
 
     <!-- 过度求测疏导卡：当日轻推演预算打满后出现（不评判、给替代建议） -->
     <div class="xj-soothe" id="xj-soothe" style="display:none">
@@ -725,9 +761,19 @@ input,textarea{font-family:inherit}
       <h2 style="margin-bottom:4px">反馈清单</h2>
       <p class="caption" style="margin-bottom:12px">共 <span class="num" id="fb-count">0</span> 条 · 仅存本机浏览器</p>
       <div id="fb-items"></div>
-      <button class="btn-primary" style="margin-top:12px" onclick="exportFb()">导出反馈（复制 + 下载 txt）</button>
+      <button class="btn-primary" style="margin-top:12px" onclick="exportFb()">导出反馈，发给朋友</button>
       <button class="btn-ghost" onclick="backToFbEdit()">返回记一笔</button>
       <button class="btn-ghost" onclick="closeFb()">关闭</button>
+    </div>
+    <!-- 导出视图（v0.3：微信里下载常被拦截，以「看得见的文本」为准） -->
+    <div id="fb-export" style="display:none">
+      <h2 style="margin-bottom:4px">导出反馈</h2>
+      <p class="caption">最稳的办法：<strong style="color:var(--accent-gold)">长按下面文本框 → 全选 → 复制</strong>，回到微信直接粘贴发给朋友。</p>
+      <textarea class="export-area" id="export-text" readonly></textarea>
+      <button class="btn-primary" onclick="copyExport()">一键复制全部</button>
+      <button class="btn-ghost" onclick="downloadExport()">试试下载 txt（电脑浏览器推荐）</button>
+      <p class="export-tip" id="export-tip" style="display:none"></p>
+      <button class="btn-ghost" onclick="backToFbList()">返回清单</button>
     </div>
   </div>
 </div>
@@ -743,6 +789,7 @@ input,textarea{font-family:inherit}
 /* ---------- ① 状态与持久化 ---------- */
 var LS_STATE = "prism_sandbox_state_v1";
 var LS_FB = "prism_sandbox_feedback_v1";
+var LS_GUIDE = "prism_sandbox_guide_dismissed_v1";
 
 var state = {
   nickname: "",
@@ -1052,6 +1099,16 @@ function enterMain() {
   paintAdviceSeg();
   paintDegrade();
   switchTab(currentTab);
+  /* v0.3 新手引导卡：未关闭过就显示（只显示一次旅程，关闭后不再打扰） */
+  var guideSeen = false;
+  try { guideSeen = localStorage.getItem(LS_GUIDE) === "1"; } catch (e) {}
+  document.getElementById("today-guide").style.display = guideSeen ? "none" : "block";
+}
+
+/* v0.3 引导卡关闭：记住选择，不再出现 */
+function dismissGuide() {
+  try { localStorage.setItem(LS_GUIDE, "1"); } catch (e) {}
+  document.getElementById("today-guide").style.display = "none";
 }
 
 function switchTab(tabId) {
@@ -1124,7 +1181,12 @@ function paintDegrade() {
 var LS_XJ = "prism_sandbox_xj_ledger_v1";
 var XJ_LIMITS = { light: 3, mid: 3, heavy: 2 };          /* 天机克制三档：日3/周3/月2 */
 var XJ_COOLDOWN_MS = { mid: 24*3600*1000, heavy: 7*24*3600*1000 }; /* 同类冷却 */
-var XJ_TIER_LABEL = { light: "轻推演", mid: "中推演", heavy: "重推演" };
+var XJ_TIER_LABEL = { light: "轻推演 · 随口看看", mid: "中推演 · 认真问一件", heavy: "重推演 · 问大事" };
+var XJ_TIER_DESC = {
+  light: "不用太认真，看看今天的状态提示。",
+  mid: "问一件具体的事。推演完要交一次「感受回执」——它帮你校准，也帮你克制。",
+  heavy: "人生级别的决定才用。必须先有你的身体数据打底，纯空问不开盘。"
+};
 var XJ_FULL_TEXT = { light: "天机不可尽泄，明天再来", mid: "天机不可尽泄，下周再来", heavy: "天机不可尽泄，下月再来" };
 var XJ_TYPES = [
   { key:"yiji",   tier:"light", name:"今日宜忌" },
@@ -1143,7 +1205,7 @@ var XJ_RESULTS = {
   hepan: "演示数据：你们的状态节律存在错位——一方的专注高峰在上午，另一方在晚间更放松。<br><br>这或许提示：重要对话可以约在对双方都从容的时段，而不是累了的时候。<br><br>关系走向不由一次合盘决定，这只是观察你们节奏的一面镜子。",
   number: "演示数据：这串数字的节律偏「动」——变化多、收束少。<br><br>把它当作自我叙事的一面小镜子就好。数字本身决定不了什么，你的状态才是变量。",
   week: "演示数据：本周节奏前紧后松。前半周适合处理存量事务，后半周状态曲线回升，或许更适合见人、表达、开启话题。<br><br>运势在这里不是判决，是一张节奏参考图。",
-  caiyun: "你问的是「财运」。这类问题棱镜不给答案，只给状态——<br><br>数据轨显示，你近两周 deep sleep 偏少、HRV 午后偏低，身体处在紧绷期。从状态视角看：涉及钱的重大决定，或许值得等睡眠回到你的常见区间之后再谈。<br><br>这不是吉凶判断，是「状态好时再看牌」的提醒。",
+  caiyun: "你问的是「财运」。这类问题棱镜不给答案，只给状态——<br><br>你的身体数据显示，近两周深度睡眠偏少、午后心率变异性偏低，身体正处在紧绷期。从状态视角看：涉及钱的重大决定，或许值得等睡眠回到你的常见水平之后再谈。<br><br>这不是吉凶判断，是「状态好时再看牌」的提醒。",
   naming: "演示数据：基于你描述的期待方向（沉稳、可信赖），候选字根方向：带「山」「木」意象的字，音律上以开口音收尾更稳。<br><br>示例方向：岳、岑、楷、棠。<br><br>名字是祝福不是预言——候选仅供参考，最后拍板的是你们。",
   timing: "演示数据：你的数据轨显示上午 9–11 点专注力更稳；时机轨上，周四上午的窗口与之重合。<br><br>双轨印证：签约、发布类安排，周四上午可作为候选时段之一。<br><br>择时给的是「状态与节奏的交汇点」，不是结果的保证书。"
 };
@@ -1205,7 +1267,8 @@ function renderXjLobby() {
     var card = document.createElement("div");
     card.className = "card xj-tier";
     var html = '<div class="tier-head"><h2>' + XJ_TIER_LABEL[tier] + '</h2>' +
-      '<span class="pill ' + (left > 0 ? "pill-fate" : "pill-grey") + ' num">' + unit + '剩余 ' + left + '/' + XJ_LIMITS[tier] + '</span></div>';
+      '<span class="pill ' + (left > 0 ? "pill-fate" : "pill-grey") + ' num">' + unit + '剩余 ' + left + '/' + XJ_LIMITS[tier] + '</span></div>' +
+      '<p class="caption" style="margin:4px 0 8px">' + XJ_TIER_DESC[tier] + '</p>';
     if (left <= 0) {
       html += '<p class="caption" style="color:var(--track-fate)">「' + XJ_FULL_TEXT[tier] + '」</p>';
       if (tier === "heavy") html += '<p class="caption" style="margin-top:4px">次数上限不出售——这不是付费墙，是克制。</p>';
@@ -1213,10 +1276,10 @@ function renderXjLobby() {
     if (tier === "heavy" && !(state.reportSeen || state.mirrorLit)) {
       /* 重推演要求双轨支撑：无基线报告 → 证据不足降级卡（禁空窗） */
       html += '<div class="degrade-card" style="margin:8px 0 0">' +
-        '<p class="dc-title">证据不足</p>' +
-        '<p>缺什么：数据轨状态输入（基线报告）。</p>' +
-        '<p style="margin-top:8px">当前基于什么：无——纯空问不开盘。</p>' +
-        '<p style="margin-top:8px">完成一次基线报告后，重推演才会开放。</p></div>';
+        '<p class="dc-title">现在还不能问大事</p>' +
+        '<p>缺什么：还没有你的身体数据打底。</p>' +
+        '<p style="margin-top:8px">没有数据就推演大事，等于空口算命——棱镜不做这件事。</p>' +
+        '<p style="margin-top:8px">回主界面走完体验流程、拿到基础报告后，这里就会开放。</p></div>';
     }
     card.innerHTML = html;
     XJ_TYPES.filter(function (t) { return t.tier === tier; }).forEach(function (t) {
@@ -1224,9 +1287,9 @@ function renderXjLobby() {
       var b = document.createElement("button");
       b.className = "xj-cast-btn";
       var sub = "";
-      if (av.reason === "cooldown") sub = "同类冷却中 · " + fmtLeft(av.left) + "可再推演";
+      if (av.reason === "cooldown") sub = "这一类刚推演过，歇一歇 · " + fmtLeft(av.left) + "后可再问";
       if (av.reason === "full") sub = XJ_FULL_TEXT[tier];
-      if (av.reason === "need_report") sub = "需先完成基线报告";
+      if (av.reason === "need_report") sub = "需先回主界面走完体验流程，拿到你的基础报告";
       if (t.red) sub = (sub ? sub + " · " : "") + "红区 · 状态化重写演示";
       if (t.tier === "mid" && !sub) sub = "代价：完成后需一次体感校验回执";
       if (t.tier === "heavy" && av.ok) sub = "代价：完成后需一次数据校准动作";
@@ -1335,6 +1398,7 @@ function openFb() {
   document.getElementById("fb-page").textContent = pageLabel();
   document.getElementById("fb-edit").style.display = "block";
   document.getElementById("fb-list").style.display = "none";
+  document.getElementById("fb-export").style.display = "none";
   document.getElementById("fb-panel").classList.add("active");
 }
 function closeFb() {
@@ -1381,10 +1445,12 @@ function openFbList() {
   });
   document.getElementById("fb-edit").style.display = "none";
   document.getElementById("fb-list").style.display = "block";
+  document.getElementById("fb-export").style.display = "none";
   document.getElementById("fb-panel").classList.add("active");
   if (currentScreen !== "s-settings") { /* 从设置进入时保持面板即可 */ }
 }
 function backToFbEdit() { openFb(); }
+function backToFbList() { openFbList(); }
 function fmtTs(iso) {
   var d = new Date(iso);
   function p(n) { return (n < 10 ? "0" : "") + n; }
@@ -1394,13 +1460,12 @@ function fmtTs(iso) {
 function escapeHtml(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-/* 导出：拼接全部记录 + 时间戳 → 复制到剪贴板 + 下载 txt */
-function exportFb() {
+/* 导出：拼接全部记录 → 展示在可见文本框里（微信兜底主路径），复制/下载为辅 */
+function buildExportTxt() {
   var list = loadFb();
   var lines = [
     "AETHEL 棱镜 · S1 体验沙箱反馈导出",
-    "棱镜体验沙箱 v0.2.1（朋友体验版）反馈",
-    "版本：SPEC-S1-sandbox v0.2.1（朋友体验版）",
+    "版本：SPEC-S1-sandbox v0.3（朋友体验版 · 白话引导版）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
     "同步率终点：" + state.sync + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
@@ -1414,26 +1479,60 @@ function exportFb() {
     if (it.text) lines.push("    感受：" + it.text);
     lines.push("");
   });
-  var txt = lines.join("\n");
-  /* 复制到剪贴板（file:// 下可能失败，降级为选中文本提示） */
+  return lines.join("\n");
+}
+function exportFb() {
+  var txt = buildExportTxt();
+  document.getElementById("export-text").value = txt;
+  document.getElementById("fb-edit").style.display = "none";
+  document.getElementById("fb-list").style.display = "none";
+  document.getElementById("fb-export").style.display = "block";
+  document.getElementById("fb-panel").classList.add("active");
+  /* 顺手试一次自动复制，失败也不挡路 */
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(txt).catch(function () {});
+    navigator.clipboard.writeText(txt).then(function () {
+      showExportTip("✓ 已自动复制到剪贴板，回微信直接粘贴即可");
+    }, function () {});
   }
-  /* 下载 txt */
-  var blob = new Blob(["﻿" + txt], { type: "text/plain;charset=utf-8" });
+}
+function copyExport() {
+  var ta = document.getElementById("export-text");
+  ta.focus(); ta.select();
+  try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+  var done = false;
+  try { done = document.execCommand("copy"); } catch (e) {}
+  if (!done && navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(function () {
+      showExportTip("✓ 已复制，回微信直接粘贴发给朋友");
+    }, function () {
+      showExportTip("自动复制被浏览器拦住了——请长按文本框 → 全选 → 复制");
+    });
+    return;
+  }
+  showExportTip(done ? "✓ 已复制，回微信直接粘贴发给朋友"
+                     : "自动复制被浏览器拦住了——请长按文本框 → 全选 → 复制");
+}
+function downloadExport() {
+  var blob = new Blob(["﻿" + buildExportTxt()], { type: "text/plain;charset=utf-8" });
   var a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "prism_sandbox_feedback_" + Date.now() + ".txt";
   document.body.appendChild(a);
   a.click();
   setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  showExportTip("如果没看到文件：微信里通常不让下载，用上面的复制就好");
+}
+function showExportTip(msg) {
+  var tip = document.getElementById("export-tip");
+  tip.textContent = msg;
+  tip.style.display = "block";
 }
 
 /* ---------- 设置：返回 / 重置旅程 ---------- */
 function backFromSettings() { go(settingsFrom); }
 function resetJourney() {
   if (!window.confirm("重置旅程将清除昵称、同步率、镜灵状态与玄机推演账本（反馈记录保留）。确定吗？")) return;
-  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); } catch (e) {}
+  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); localStorage.removeItem(LS_GUIDE); } catch (e) {}
   state = { nickname: "", sync: 0, authorized: false, scored: false, scoreCount: 0,
             mirrorLit: false, adviceLevel: "observe", degraded: false, reportSeen: false, step: "s-welcome" };
   location.reload();
