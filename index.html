@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.2.1</title>
+<!--
+  AETHEL 棱镜 · S1 切片体验沙箱（假数据真体验）
+  单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开
+  设计 tokens / 同步率数值 / 文案全部抄自 prism/constants/constants.json 与 SPEC-S1/S2 冻结规格
+-->
+<style>
+/* ============ 设计 tokens（constants.json ui_tokens 冻结值） ============ */
+:root{
+  --bg-base:#0E1A2F;        /* 深夜蓝 · 全局背景 */
+  --bg-card:#162847;        /* 内容容器 */
+  --bg-raised:#1F3357;      /* 上浮层 */
+  --border-subtle:#2C4166;  /* 分隔线、卡片描边 */
+  --text-primary:#F2F4F7;   /* 一级文字 */
+  --text-secondary:#9AA5B5; /* 二级文字 */
+  --accent-gold:#C9A227;    /* 主强调金 */
+  --semantic-normal:#5BA87C;/* 绿 */
+  --semantic-alert:#D45B5B; /* 警示红（仅红区/危机） */
+  --track-data:#4A9EBF;     /* 冷青 · 数据轨 */
+  --track-fate:#B8863B;     /* 玄机褐金 · 玄机轨 */
+  --track-conflict:#6B7787; /* 中性灰 · 冲突 */
+  /* 字号阶梯 12/14/17/22/28（12 绝对下限） */
+  --fs-caption:12px; --fs-body:14px; --fs-subtitle:17px; --fs-title:22px; --fs-ritual:28px;
+  /* 4pt 栅格 */
+  --page-margin:20px; --card-padding:16px; --card-gap:12px; --block-gap:24px;
+  --sync-bar-h:44px;
+  /* 圆角 */
+  --r-card:16px; --r-button:12px; --r-pill:999px; --r-input:8px;
+  /* 动效 */
+  --ease-feedback:cubic-bezier(0,0,0.2,1);            /* 200ms ease-out 常规反馈 */
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);       /* 600ms spring(0.8) 同步率跳动 */
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#081222}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg-base); color:var(--text-primary);
+  font-size:var(--fs-body); line-height:1.5;
+  min-height:100vh;
+}
+/* 移动端优先：桌面打开时呈现为手机壳居中单列 */
+#phone{
+  max-width:420px; margin:0 auto; min-height:100vh;
+  background:var(--bg-base); position:relative;
+  box-shadow:0 0 60px rgba(0,0,0,.5);
+  padding-bottom:96px; /* 给浮动按钮留位 */
+}
+.num{font-variant-numeric:tabular-nums; font-family:Consolas,Menlo,monospace}
+h1{font-size:var(--fs-title);line-height:1.35;font-weight:600}
+h2{font-size:var(--fs-subtitle);line-height:1.35;font-weight:600}
+.ritual-font{font-size:var(--fs-ritual);line-height:1.35;font-family:Georgia,"Songti SC",serif}
+.caption{font-size:var(--fs-caption);color:var(--text-secondary)}
+.serif{font-family:Georgia,"Songti SC",serif}
+button{font-family:inherit;cursor:pointer;border:none}
+input,textarea{font-family:inherit}
+
+/* ============ 通用组件 ============ */
+.screen{display:none;padding:var(--page-margin);animation:fadein .2s var(--ease-feedback)}
+.screen.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{
+  background:var(--bg-card); border:1px solid var(--border-subtle);
+  border-radius:var(--r-card); padding:var(--card-padding);
+  margin-bottom:var(--card-gap);
+}
+.btn-primary{
+  display:block;width:100%;padding:14px;border-radius:var(--r-button);
+  background:var(--accent-gold);color:#0E1A2F;font-size:var(--fs-subtitle);font-weight:600;
+  transition:opacity .2s var(--ease-feedback),transform .2s var(--ease-feedback);
+}
+.btn-primary:active{transform:scale(.98);opacity:.9}
+.btn-ghost{
+  display:block;width:100%;padding:12px;background:none;color:var(--text-secondary);
+  font-size:var(--fs-body);text-align:center;margin-top:8px;
+}
+.pill{
+  display:inline-block;padding:4px 12px;border-radius:var(--r-pill);
+  font-size:var(--fs-caption);line-height:1.5;border:1px solid var(--border-subtle);
+}
+.pill-gold{color:var(--accent-gold);border-color:var(--accent-gold)}
+.pill-data{color:var(--track-data);border-color:var(--track-data)}
+.pill-fate{color:var(--track-fate);border-color:var(--track-fate)}
+.pill-grey{color:var(--text-secondary)}
+.pill-aligned{
+  color:var(--text-primary);border:none;
+  background:linear-gradient(90deg,var(--track-data),var(--accent-gold));
+}
+.tag-demo{color:var(--text-secondary);border-style:dashed}
+.footer-ai{
+  text-align:center;color:var(--text-secondary);font-size:var(--fs-caption);
+  padding:var(--block-gap) 0 8px;
+}
+.divider{height:1px;background:var(--border-subtle);margin:var(--block-gap) 0}
+
+/* ============ 同步率条（44px 常驻顶部） ============ */
+.syncbar{
+  height:var(--sync-bar-h);display:flex;align-items:center;gap:12px;
+  background:var(--bg-raised);border:1px solid var(--border-subtle);
+  border-radius:var(--r-card);padding:0 var(--card-padding);
+  margin-bottom:var(--card-gap);cursor:pointer;user-select:none;
+  transition:background .2s var(--ease-feedback);
+  position:relative;overflow:visible;
+}
+.syncbar .sb-track{flex:1;height:8px;border-radius:var(--r-pill);background:#0E1A2F;overflow:hidden}
+.syncbar .sb-fill{
+  height:100%;border-radius:var(--r-pill);background:var(--accent-gold);
+  width:0%;transition:width .6s var(--ease-spring);
+}
+.syncbar .sb-pct{font-size:var(--fs-subtitle);font-weight:600;color:var(--accent-gold);min-width:52px;text-align:right}
+.syncbar .sb-lv{font-size:var(--fs-caption);color:var(--text-secondary)}
+/* +32% 浮动标签：从条上弹出后消散 */
+.float-delta{
+  position:absolute;right:16px;top:-8px;color:var(--accent-gold);
+  font-size:var(--fs-subtitle);font-weight:600;
+  animation:floatup .6s var(--ease-spring) forwards;pointer-events:none;
+}
+@keyframes floatup{0%{opacity:0;transform:translateY(10px) scale(.8)}30%{opacity:1;transform:translateY(-4px) scale(1.1)}100%{opacity:0;transform:translateY(-22px) scale(1)}}
+/* 四维度展开面板 */
+.sync-panel{
+  display:none;background:var(--bg-raised);border:1px solid var(--border-subtle);
+  border-radius:var(--r-card);padding:var(--card-padding);margin-bottom:var(--card-gap);
+  animation:fadein .2s var(--ease-feedback);
+}
+.sync-panel.open{display:block}
+.dim-row{margin-bottom:12px}
+.dim-row:last-child{margin-bottom:0}
+.dim-head{display:flex;justify-content:space-between;font-size:var(--fs-body);margin-bottom:4px}
+.dim-track{height:6px;border-radius:var(--r-pill);background:#0E1A2F;overflow:hidden}
+.dim-fill{height:100%;border-radius:var(--r-pill);background:var(--track-data);transition:width .6s var(--ease-spring)}
+
+/* ============ 双轨解读卡 ============ */
+.dual-card{display:flex;gap:var(--card-gap)}
+.dual-col{flex:1;border-radius:var(--r-card);padding:var(--card-padding);font-size:var(--fs-body)}
+.dual-data{background:rgba(74,158,191,.12);border:1px solid var(--track-data)}
+.dual-fate{background:rgba(184,134,59,.12);border:1px solid var(--track-fate)}
+.dual-col h3{font-size:var(--fs-caption);margin-bottom:8px;letter-spacing:2px}
+.dual-data h3{color:var(--track-data)}
+.dual-fate h3{color:var(--track-fate)}
+.aligned-strip{
+  margin-top:var(--card-gap);padding:10px 16px;border-radius:var(--r-button);
+  background:linear-gradient(90deg,rgba(74,158,191,.25),rgba(201,162,39,.25));
+  border:1px solid var(--accent-gold);font-size:var(--fs-caption);
+}
+
+/* ============ 镜灵点亮仪式（1200ms 两段式：起-停-绽放） ============ */
+#ritual{
+  display:none;position:fixed;inset:0;z-index:60;
+  background:rgba(8,18,34,.96);align-items:center;justify-content:center;flex-direction:column;
+}
+#ritual.active{display:flex}
+#ritual .mirror-orb{
+  width:96px;height:96px;border-radius:50%;
+  background:#3a4356;border:2px solid var(--border-subtle);
+  display:flex;align-items:center;justify-content:center;font-size:40px;
+}
+#ritual.active .mirror-orb{animation:ritual 1.2s ease-in-out forwards}
+@keyframes ritual{
+  0%{transform:scale(.7);opacity:.4;background:#3a4356;box-shadow:none}         /* 起 */
+  35%{transform:scale(1);opacity:1;background:#3a4356;box-shadow:none}           /* 停 */
+  55%{transform:scale(1);background:#3a4356}
+  100%{transform:scale(1.08);background:var(--accent-gold);box-shadow:0 0 60px rgba(201,162,39,.55)} /* 绽放 */
+}
+#ritual .ritual-text{margin-top:24px;color:var(--text-secondary);font-size:var(--fs-body);opacity:0}
+#ritual.active .ritual-text{animation:ritualtext 1.2s ease-in-out forwards}
+@keyframes ritualtext{0%,55%{opacity:0}100%{opacity:1}}
+
+/* ============ 四 Tab 主界面 ============ */
+#tabbar{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:420px;z-index:40;
+  display:flex;background:var(--bg-raised);border-top:1px solid var(--border-subtle);
+}
+#tabbar button{
+  flex:1;padding:12px 0;background:none;color:var(--text-secondary);
+  font-size:var(--fs-caption);display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:color .2s var(--ease-feedback);
+}
+#tabbar button.on{color:var(--accent-gold)}
+#tabbar .ti{font-size:20px;line-height:1}
+.tabpage{display:none}
+.tabpage.active{display:block;animation:fadein .2s var(--ease-feedback)}
+
+/* ============ 分身页：镜灵 + 建议强度滑块 ============ */
+.mirror-face{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  transition:background 1.2s ease-in-out,box-shadow 1.2s ease-in-out;
+}
+.mirror-face.grey{background:#3a4356;border:2px solid var(--border-subtle);filter:grayscale(1)}
+.mirror-face.gold{background:var(--accent-gold);box-shadow:0 0 32px rgba(201,162,39,.45)}
+.seg-slider{display:flex;background:#0E1A2F;border-radius:var(--r-pill);padding:4px;gap:4px}
+.seg-slider button{
+  flex:1;padding:10px 0;border-radius:var(--r-pill);background:none;
+  color:var(--text-secondary);font-size:var(--fs-body);
+  transition:background .2s var(--ease-feedback),color .2s var(--ease-feedback);
+}
+.seg-slider button.on{background:var(--accent-gold);color:#0E1A2F;font-weight:600}
+
+/* ============ 人工确认门（不可关闭：无 X、点遮罩不退出，必须确认或放弃） ============ */
+#gate{
+  display:none;position:fixed;inset:0;z-index:70;
+  background:rgba(8,18,34,.9);align-items:flex-end;justify-content:center;
+}
+#gate.active{display:flex;animation:fadein .2s var(--ease-feedback)}
+#gate .gate-box{
+  width:100%;max-width:420px;background:var(--bg-raised);
+  border:1px solid var(--accent-gold);border-bottom:none;
+  border-radius:var(--r-card) var(--r-card) 0 0;padding:var(--page-margin);
+}
+
+/* ============ 降级态卡（300ms ease-in-out） ============ */
+.degrade-card{
+  border:1px dashed var(--text-secondary);background:var(--bg-card);
+  border-radius:var(--r-card);padding:var(--card-padding);margin-bottom:var(--card-gap);
+  transition:opacity .3s ease-in-out;
+}
+.degrade-card .dc-title{color:var(--text-secondary);font-size:var(--fs-subtitle);margin-bottom:8px}
+
+/* ============ 体感打分 ============ */
+.score-row{display:flex;gap:8px}
+.score-row button{
+  flex:1;padding:10px 0;border-radius:var(--r-button);
+  background:#0E1A2F;border:1px solid var(--border-subtle);
+  color:var(--text-secondary);font-size:var(--fs-caption);
+  transition:all .2s var(--ease-feedback);
+}
+.score-row button.sel{background:var(--accent-gold);color:#0E1A2F;border-color:var(--accent-gold);font-weight:600}
+
+/* ============ 反馈面板（核心） ============ */
+#fab{
+  position:fixed;right:calc(50% - 210px + 16px);bottom:88px;z-index:50;
+  padding:12px 20px;border-radius:var(--r-pill);
+  background:var(--bg-raised);border:1px solid var(--accent-gold);color:var(--accent-gold);
+  font-size:var(--fs-body);box-shadow:0 4px 20px rgba(0,0,0,.4);
+  transition:transform .2s var(--ease-feedback);
+}
+#fab:active{transform:scale(.95)}
+@media (max-width:452px){#fab{right:16px}}
+#fb-panel{
+  display:none;position:fixed;inset:0;z-index:55;background:rgba(8,18,34,.85);
+  align-items:flex-end;justify-content:center;
+}
+#fb-panel.active{display:flex;animation:fadein .2s var(--ease-feedback)}
+#fb-panel .fb-box{
+  width:100%;max-width:420px;max-height:82vh;overflow-y:auto;
+  background:var(--bg-base);border:1px solid var(--border-subtle);border-bottom:none;
+  border-radius:var(--r-card) var(--r-card) 0 0;padding:var(--page-margin);
+}
+.fb-tags{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.fb-tags button{
+  padding:8px 14px;border-radius:var(--r-pill);background:var(--bg-card);
+  border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:var(--fs-caption);
+  transition:all .2s var(--ease-feedback);
+}
+.fb-tags button.sel{background:var(--accent-gold);color:#0E1A2F;border-color:var(--accent-gold)}
+.fb-tags button.sel.negative{background:var(--semantic-alert);border-color:var(--semantic-alert);color:#fff}
+#fb-text{
+  width:100%;min-height:88px;border-radius:var(--r-input);padding:12px;
+  background:var(--bg-card);border:1px solid var(--border-subtle);
+  color:var(--text-primary);font-size:var(--fs-body);resize:vertical;
+}
+.fb-item{border-top:1px solid var(--border-subtle);padding:12px 0}
+.fb-item .fb-meta{font-size:var(--fs-caption);color:var(--text-secondary);margin-bottom:4px}
+
+/* ============ 玄机模式（独立天窗 · 天机克制，v0.2 概念演示） ============ */
+.xj-entry{
+  display:flex;justify-content:space-between;align-items:center;width:100%;
+  padding:12px 16px;margin-bottom:var(--card-gap);
+  background:none;border:1px dashed var(--border-subtle);border-radius:var(--r-button);
+  color:var(--text-secondary);font-size:var(--fs-body);
+  transition:border-color .2s var(--ease-feedback),color .2s var(--ease-feedback);
+}
+.xj-entry:active{border-color:var(--track-fate);color:var(--track-fate)}
+/* 开门仪式：300ms ease-in-out 过渡 */
+.screen-xj{display:none;padding:var(--page-margin)}
+.screen-xj.active{display:block;animation:xjopen .3s ease-in-out}
+@keyframes xjopen{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+/* 顶部常驻提醒 */
+.xj-reminder{
+  position:sticky;top:0;z-index:10;margin:0 calc(-1 * var(--page-margin)) var(--card-gap);
+  padding:10px var(--page-margin);background:var(--bg-base);
+  border-bottom:1px solid var(--border-subtle);
+  color:var(--track-fate);font-size:var(--fs-caption);text-align:center;
+}
+.xj-tier{margin-bottom:var(--card-gap)}
+.xj-tier .tier-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.xj-cast-btn{
+  display:block;width:100%;text-align:left;padding:12px;margin-top:8px;
+  background:#0E1A2F;border:1px solid var(--border-subtle);border-radius:var(--r-button);
+  color:var(--text-primary);font-size:var(--fs-body);
+  transition:opacity .2s var(--ease-feedback);
+}
+.xj-cast-btn:disabled{opacity:.4;cursor:not-allowed}
+.xj-cast-btn .sub{display:block;font-size:var(--fs-caption);color:var(--text-secondary);margin-top:2px}
+.xj-soothe{
+  border:1px solid var(--semantic-normal);background:rgba(91,168,124,.08);
+  border-radius:var(--r-card);padding:var(--card-padding);margin-bottom:var(--card-gap);
+}
+.xj-burn{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--text-secondary);font-size:var(--fs-caption);
+  border:1px dashed var(--border-subtle);border-radius:var(--r-pill);padding:4px 12px;
+}
+
+/* ============ 表单 ============ */
+.text-input{
+  width:100%;padding:14px;border-radius:var(--r-input);
+  background:var(--bg-card);border:1px solid var(--border-subtle);
+  color:var(--text-primary);font-size:var(--fs-subtitle);margin:12px 0 var(--block-gap);
+}
+/* 授权开关 */
+.auth-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid var(--border-subtle);
+}
+.auth-row:last-child{border-bottom:none}
+.switch{
+  width:48px;height:28px;border-radius:var(--r-pill);background:#0E1A2F;
+  border:1px solid var(--border-subtle);position:relative;flex-shrink:0;
+  transition:background .2s var(--ease-feedback);
+}
+.switch::after{
+  content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:var(--text-secondary);transition:all .2s var(--ease-feedback);
+}
+.switch.on{background:var(--semantic-normal)}
+.switch.on::after{left:23px;background:#fff}
+/* 加载表演示（<3s） */
+.loading-bar{height:6px;border-radius:var(--r-pill);background:#0E1A2F;overflow:hidden;margin:var(--block-gap) 0}
+.loading-fill{height:100%;width:0%;background:var(--accent-gold);border-radius:var(--r-pill);transition:width .3s ease}
+.skel{height:64px;border-radius:var(--r-card);background:var(--bg-card);margin-bottom:var(--card-gap);opacity:.6}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--block-gap)}
+.topbar .gear{background:none;color:var(--text-secondary);font-size:22px;padding:4px}
+.wl-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+</style>
+</head>
+<body>
+<div id="phone">
+
+  <!-- ================= 屏 1 · 欢迎页 ================= -->
+  <section class="screen" id="s-welcome">
+    <div style="text-align:center;padding:64px 0 40px">
+      <div class="ritual-font" style="color:var(--accent-gold)">✦ 棱镜</div>
+      <div class="caption" style="margin-top:8px">AETHEL PRISM</div>
+    </div>
+    <h1 style="margin-bottom:8px">决策辅助与自我认知工具</h1>
+    <p class="caption" style="margin-bottom:16px">这是「棱镜」产品的体验 Demo · 全部数据均为演示数据，不会读取你的任何真实信息</p>
+    <p style="color:var(--text-secondary);margin-bottom:12px">
+      把你的健康数据变成一面镜子：看清状态、了解节奏，为日常决定多一个参考视角。
+    </p>
+    <p style="color:var(--text-secondary);margin-bottom:12px">
+      它给出的每一个判断都只是视角，不是答案。做决定的人，始终是你。
+    </p>
+    <p style="margin-bottom:var(--block-gap)">
+      不用任何说明，凭直觉随便点就好。任何瞬间有感觉——喜欢、不舒服、看不懂、想关掉——点右下角金色按钮记下来，你的感受会直接变成产品改进。
+    </p>
+    <div class="card">
+      <span class="pill tag-demo">体验沙箱</span>
+      <p class="caption" style="margin-top:8px">本页面为 S1 切片演示环境，全部内容为演示数据，不会读取你的任何真实信息。</p>
+    </div>
+    <button class="btn-primary" onclick="go('s-register')">开始体验</button>
+    <div class="footer-ai">SPEC-S1-sandbox v0.2.1 · 对应 S1 切片（假数据真体验）</div>
+  </section>
+
+  <!-- ================= 屏 2 · 注册（模拟） ================= -->
+  <section class="screen" id="s-register">
+    <div style="padding-top:64px">
+      <h1>怎么称呼你？</h1>
+      <p class="caption" style="margin-top:8px">本地模拟注册，昵称只存在这台设备的浏览器里。</p>
+      <input class="text-input" id="nickname" maxlength="12" placeholder="输入昵称" autocomplete="off">
+      <button class="btn-primary" onclick="doRegister()">进入棱镜</button>
+      <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+    </div>
+  </section>
+
+  <!-- ================= 屏 2.5 · 注册完成首屏（冻结文案） ================= -->
+  <section class="screen" id="s-hello">
+    <div style="padding-top:64px;text-align:center">
+      <div class="mirror-face grey" style="margin-bottom:24px">◐</div>
+      <h2 class="serif" style="margin-bottom:16px">这是你的第一面镜子。</h2>
+      <p style="color:var(--text-secondary)">同步率 <span class="num" style="color:var(--accent-gold);font-size:var(--fs-subtitle)">12%</span>，它会随着你的使用生长。</p>
+      <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
+      <p class="caption" style="margin-bottom:var(--block-gap)">四个维度里未开放的会诚实显示 0%——它没有假装已经很懂你。</p>
+      <button class="btn-primary" onclick="go('s-auth')">继续</button>
+    </div>
+  </section>
+
+  <!-- ================= 屏 3 · 模拟授权页 ================= -->
+  <section class="screen" id="s-auth">
+    <h1 style="padding-top:24px">模拟授权 · 健康数据</h1>
+    <div class="card" style="margin-top:16px">
+      <p style="font-size:var(--fs-body)">「这些数据只在这台手机上计算，原始数据用后即焚，留存时间 0 秒。」</p>
+    </div>
+    <div class="card" id="auth-list">
+      <p class="caption" style="margin-bottom:8px">逐项选择，不搞「全部允许」式模糊授权。每一项：</p>
+      <p class="caption" style="margin-bottom:4px;color:var(--accent-gold)">沙箱演示 · 不会读取真实数据</p>
+    </div>
+    <div id="auth-reject-note" style="display:none" class="degrade-card">
+      <p>你可以不接设备。手动打卡同样能生成报告，只是维度会少一些。</p>
+    </div>
+    <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
+    <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
+    <div class="footer-ai">授权后同步率 +32pp → 44%（冻结值，当秒反馈）</div>
+  </section>
+
+  <!-- ================= 屏 4 · 基线报告生成（<3s 加载表演示） ================= -->
+  <section class="screen" id="s-loading">
+    <div style="padding-top:96px;text-align:center">
+      <h2>正在生成你的基线报告</h2>
+      <p class="caption" style="margin-top:8px">演示加载 · 真实规格要求 3 秒内完成</p>
+      <div class="loading-bar"><div class="loading-fill" id="load-fill"></div></div>
+      <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+    </div>
+  </section>
+
+  <!-- ================= 屏 5 · 基线报告 ================= -->
+  <section class="screen" id="s-report">
+    <div id="report-sync-slot"></div>
+    <div class="card">
+      <p class="serif" style="font-size:var(--fs-subtitle)">这是你的第一面镜子。7 天后它会更像你。</p>
+      <div style="margin-top:8px">
+        <span class="pill tag-demo">演示数据</span>
+        <span class="pill pill-grey">◔ 置信度：中</span>
+      </div>
+    </div>
+    <h2 style="margin:var(--block-gap) 0 12px">五维状态</h2>
+    <div id="dim-cards"></div>
+    <h2 style="margin:var(--block-gap) 0 12px">今日一条主建议</h2>
+    <div class="card">
+      <span class="pill pill-data" style="margin-bottom:8px">观察档</span>
+      <p id="main-advice" style="margin-top:8px">数据显示你本周 deep sleep 偏少，今晚或许值得早点放下手机。</p>
+      <p class="caption" style="margin-top:8px">一个参考视角，采不采纳由你。</p>
+    </div>
+    <!-- 体感打分：点击即提交，无二次确认 -->
+    <div class="card" id="score-card">
+      <h2 style="margin-bottom:4px">这次说的准吗？</h2>
+      <p class="caption" style="margin-bottom:12px">点一下就好，没有第二次确认。</p>
+      <div class="score-row" id="score-row">
+        <button data-s="1">完全不准</button><button data-s="2">不太准</button><button data-s="3">一般</button><button data-s="4">挺准</button><button data-s="5">很准</button>
+      </div>
+      <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
+    </div>
+    <button class="btn-primary" onclick="go('s-dual')">查看首次双轨解读</button>
+    <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+  </section>
+
+  <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
+  <section class="screen" id="s-dual">
+    <h1 style="padding-top:24px;margin-bottom:4px">首次双轨解读</h1>
+    <p class="caption" style="margin-bottom:var(--block-gap)">同一段时间，两条轨道各自看一眼，再对照。</p>
+    <div class="dual-card">
+      <div class="dual-col dual-data">
+        <h3>数据轨</h3>
+        <p>近 7 天睡眠与 HRV 趋势显示，身体恢复偏慢，节奏或许适合放缓一些。</p>
+        <p class="caption" style="margin-top:8px;color:var(--track-data)">演示数据 · 基于睡眠/HRV 样本</p>
+      </div>
+      <div class="dual-col dual-fate">
+        <h3>玄机轨</h3>
+        <p>今日节气交替，气机收敛，时机窗口偏向休整与复盘，而非开启新事。</p>
+        <p class="caption" style="margin-top:8px;color:var(--track-fate)">预演，不是预言 · 一种状态视角</p>
+      </div>
+    </div>
+    <div class="aligned-strip">
+      <strong>双轨印证</strong> · 两条轨道指向相近的方向，下方为高置信建议。
+    </div>
+    <div class="card" style="margin-top:var(--card-gap)">
+      <span class="pill pill-aligned" style="margin-bottom:8px">双轨印证 · 高置信</span>
+      <p style="margin-top:8px">未来两天看起来适合低强度恢复：早点休息，把重要决定往后排一排，也许会更从容。</p>
+      <p class="caption" style="margin-top:8px">观察档措辞 · 仅为参考视角</p>
+    </div>
+    <div class="card" id="taught-badge" style="display:none;border-color:var(--semantic-normal)">
+      <p style="color:var(--semantic-normal)">✓ 上次你教过我，这次我改了看法。</p>
+      <p class="caption" style="margin-top:4px">你的体感打分已经进入校准维度。</p>
+    </div>
+    <button class="btn-primary" onclick="startRitual()">完成解读，点亮镜灵</button>
+    <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+  </section>
+
+  <!-- ================= 屏 7 · 四 Tab 主界面 ================= -->
+  <section class="screen" id="s-main">
+    <div class="topbar">
+      <div>
+        <span style="font-size:var(--fs-subtitle);font-weight:600" id="hello-name"></span>
+        <span class="caption" id="hello-sub"></span>
+      </div>
+      <button class="gear" onclick="go('s-settings')" aria-label="设置">⚙</button>
+    </div>
+
+    <!-- Tab · 今日 -->
+    <div class="tabpage" id="tab-today">
+      <div id="main-sync-slot"></div>
+      <div id="today-normal">
+        <h2 style="margin-bottom:12px">今日</h2>
+        <div class="card">
+          <span class="pill pill-data" style="margin-bottom:8px">观察档</span>
+          <p style="margin-top:8px">数据显示你本周 deep sleep 偏少，今晚或许值得早点放下手机。</p>
+          <p class="caption" style="margin-top:8px">演示数据 · ◔ 置信度：中</p>
+        </div>
+        <div class="card">
+          <span class="pill pill-aligned" style="margin-bottom:8px">双轨印证 · 高置信</span>
+          <p style="margin-top:8px">未来两天看起来适合低强度恢复：早点休息，把重要决定往后排一排。</p>
+          <p class="caption" style="margin-top:8px">预演，不是预言 · 仅为参考视角</p>
+        </div>
+      </div>
+      <!-- 降级态演示：证据不足卡（禁白屏） -->
+      <div id="today-degraded" style="display:none">
+        <h2 style="margin-bottom:12px">今日</h2>
+        <div class="degrade-card">
+          <p class="dc-title">证据不足</p>
+          <p>缺什么：设备数据未接入，近 30 分钟没有新样本。</p>
+          <p style="margin-top:8px">当前基于什么：本地演示样例数据。</p>
+          <p style="margin-top:8px">置信度已降级——这一页暂时不给判断，只保留引导。</p>
+          <p class="caption" style="margin-top:12px">想恢复正常演示？到设置里关掉「演示：证据不足降级态」即可。</p>
+        </div>
+      </div>
+      <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+    </div>
+
+    <!-- Tab · 时机 -->
+    <div class="tabpage" id="tab-timing">
+      <h2 style="margin-bottom:12px">时机窗口</h2>
+      <!-- 玄机模式入口：低调、不诱导（独立天窗 · 有门的房间） -->
+      <button class="xj-entry" onclick="openXj()">
+        <span>◈ 玄机模式</span>
+        <span class="caption">独立天窗 · 退出不留痕</span>
+      </button>
+      <p class="caption" style="margin-bottom:12px">标注证据来源：单源证据 = 只有一条轨道看到；双轨印证 = 两条轨道指向一致。</p>
+      <div class="card">
+        <div class="wl-row">
+          <div>
+            <p style="font-weight:600">今晚 21:00–23:00 · 休整窗口</p>
+            <p class="caption" style="margin-top:4px">数据轨恢复趋势与玄机轨收敛时段重合，看起来适合早点收尾。</p>
+          </div>
+          <span class="pill pill-aligned">双轨印证</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="wl-row">
+          <div>
+            <p style="font-weight:600">明日 09:00–11:00 · 专注窗口</p>
+            <p class="caption" style="margin-top:4px">仅数据轨：你的 HRV 上午通常较高，专注类工作或许更顺。</p>
+          </div>
+          <span class="pill pill-data">单源证据</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="wl-row">
+          <div>
+            <p style="font-weight:600">周四 14:00–16:00 · 沟通窗口</p>
+            <p class="caption" style="margin-top:4px">仅玄机轨：时段气机外放，适合表达与协商。预演，不是预言。</p>
+          </div>
+          <span class="pill pill-fate">单源证据</span>
+        </div>
+      </div>
+      <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+    </div>
+
+    <!-- Tab · 复盘（Weekly Mirror 壳 + 应验成绩单壳） -->
+    <div class="tabpage" id="tab-review">
+      <h2 style="margin-bottom:12px">复盘</h2>
+      <div class="degrade-card">
+        <p class="dc-title">Weekly Mirror · 第 1 周（演示壳）</p>
+        <p>使用满 7 天后，这里会生成本周的状态复盘：睡眠、节奏、你的打分，一起回看。</p>
+        <p class="caption" style="margin-top:8px">诚实先于完整——现在还没有数据，就先如实告诉你。</p>
+      </div>
+      <div class="degrade-card">
+        <p class="dc-title">应验成绩单（演示壳）</p>
+        <p>你打过的每一次分、确认的每一次应验回执，会在这里汇成一份可回看的成绩单。</p>
+        <p class="caption" style="margin-top:8px">当前记录：体感打分 <span class="num" id="review-score-count">0</span> 次。</p>
+      </div>
+      <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+    </div>
+
+    <!-- Tab · 分身 -->
+    <div class="tabpage" id="tab-avatar">
+      <h2 style="margin-bottom:12px">分身</h2>
+      <div class="card" style="text-align:center">
+        <div class="mirror-face grey" id="mirror-face">◐</div>
+        <p class="serif" style="font-size:var(--fs-subtitle)" id="mirror-name">镜灵 · 未点亮</p>
+        <p class="caption" style="margin-top:4px" id="mirror-hint">完成首次双轨解读后点亮</p>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom:4px">建议强度</h2>
+        <p class="caption" style="margin-bottom:12px">你希望它说话说到什么程度。</p>
+        <div class="seg-slider" id="advice-seg">
+          <button data-lv="observe" class="on">观察</button>
+          <button data-lv="suggest">建议</button>
+          <button data-lv="assert">强判断</button>
+        </div>
+        <p class="caption" style="margin-top:12px" id="advice-desc">观察档：只呈现数据和状态，不给倾向。</p>
+      </div>
+      <div class="card">
+        <p class="caption">同步率四维：数据 / 校准 / 决策 / 传承。决策与传承维度尚未开放，会诚实显示 0%——即将开放，是因为我们还没有你的数据。</p>
+      </div>
+      <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+    </div>
+  </section>
+
+  <!-- ================= 屏 8 · 设置 ================= -->
+  <section class="screen" id="s-settings">
+    <div class="topbar">
+      <h1>设置</h1>
+      <button class="gear" onclick="backFromSettings()" aria-label="返回">←</button>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:8px">沙箱说明</h2>
+      <p class="caption">这是 AETHEL 棱镜的体验沙箱，对应 S1 切片规格（SPEC-S1）。全部内容为演示数据，不读取任何真实信息，用于 Demo Day 用户体验测试。含玄机模式概念演示（待评审提案 V0.1）。</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.2.1（朋友体验版）</p>
+    </div>
+    <div class="card">
+      <div class="auth-row">
+        <div>
+          <p>演示：证据不足降级态</p>
+          <p class="caption">打开后，首页数据卡变为「证据不足」降级卡</p>
+        </div>
+        <button class="switch" id="sw-degrade" onclick="toggleDegrade()" aria-label="降级态演示开关"></button>
+      </div>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:8px">体验反馈</h2>
+      <p class="caption" style="margin-bottom:12px">你记下的每一笔感受都只存在这台设备上。</p>
+      <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
+    </div>
+    <button class="btn-ghost" style="color:var(--semantic-alert)" onclick="resetJourney()">重置旅程（清除昵称/同步率/镜灵状态）</button>
+    <div class="footer-ai">SPEC-S1-sandbox v0.1 · 深色唯一主题</div>
+  </section>
+
+  <!-- ================= 屏 9 · 玄机模式门厅（独立天窗，v0.2） ================= -->
+  <section class="screen-xj" id="s-xj-lobby">
+    <div class="xj-reminder">以下为视角与时机参考，不是预言</div>
+    <h1 style="margin-bottom:4px">玄机模式</h1>
+    <p class="caption" style="margin-bottom:var(--block-gap)">一个有门的房间。端侧推演，预算记账只在这台设备上；退出后，首页不会留下你来过的痕迹。</p>
+
+    <!-- 过度求测疏导卡：当日轻推演预算打满后出现（不评判、给替代建议） -->
+    <div class="xj-soothe" id="xj-soothe" style="display:none">
+      <p style="font-size:var(--fs-body)">今天已经推演三次了。天机留白，也是答案的一部分。</p>
+      <p class="caption" style="margin-top:8px">或许今晚值得早点休息——明天数据轨会有新故事。</p>
+    </div>
+
+    <div id="xj-tiers"><!-- 由 JS 渲染三档预算账本 --></div>
+
+    <p class="caption" style="margin:var(--block-gap) 0 12px">次数上限是产品价值观，不出售。这里没有任何「付费加算」入口。</p>
+    <button class="btn-ghost" onclick="exitXj()">离开玄机模式</button>
+    <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+  </section>
+
+  <!-- ================= 屏 10 · 推演结果页（v0.2） ================= -->
+  <section class="screen-xj" id="s-xj-result">
+    <div class="xj-reminder">以下为视角与时机参考，不是预言</div>
+    <div class="card">
+      <div class="wl-row">
+        <h2 id="xj-res-title">推演</h2>
+        <span class="pill tag-demo">演示数据</span>
+      </div>
+      <p class="caption" style="margin-top:4px" id="xj-res-tier"></p>
+    </div>
+    <div class="card" id="xj-res-body"></div>
+    <div class="card" id="xj-res-rewrite" style="display:none;border-color:var(--track-fate)">
+      <p class="caption" style="color:var(--track-fate)">红区问题 · 已状态化重写</p>
+      <p class="caption" style="margin-top:4px">这类问题棱镜不给答案，只给状态。原始问法不会被记录。</p>
+    </div>
+    <!-- 代价区：中推演=体感校验回执；重推演=数据校准动作（演示） -->
+    <div class="card" id="xj-cost" style="display:none">
+      <h2 style="margin-bottom:4px" id="xj-cost-title"></h2>
+      <p class="caption" style="margin-bottom:12px" id="xj-cost-desc"></p>
+      <div class="score-row" id="xj-score-row" style="display:none">
+        <button data-s="1">完全没帮助</button><button data-s="2">不太有</button><button data-s="3">一般</button><button data-s="4">有点帮助</button><button data-s="5">很有帮助</button>
+      </div>
+      <button class="xj-cast-btn" id="xj-calib-btn" style="display:none" onclick="xjCalibDone()">完成一次数据校准（演示）<span class="sub">模拟：补齐今日手动打卡</span></button>
+      <p id="xj-cost-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，代价已付清。</p>
+    </div>
+    <p style="margin:var(--block-gap) 0 12px"><span class="xj-burn">◌ 本次记录阅后即焚 · 结果仅你可见，请勿截屏分享</span></p>
+    <button class="btn-primary" id="xj-finish-btn" onclick="finishXj()">收下这个视角，离开</button>
+    <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+  </section>
+
+</div><!-- /#phone -->
+
+<!-- ================= 四 Tab 底栏（仅主界面显示） ================= -->
+<nav id="tabbar" style="display:none">
+  <button data-tab="tab-today" onclick="switchTab('tab-today')"><span class="ti">☀</span>今日</button>
+  <button data-tab="tab-timing" onclick="switchTab('tab-timing')"><span class="ti">◷</span>时机</button>
+  <button data-tab="tab-review" onclick="switchTab('tab-review')"><span class="ti">↺</span>复盘</button>
+  <button data-tab="tab-avatar" onclick="switchTab('tab-avatar')"><span class="ti">◐</span>分身</button>
+</nav>
+
+<!-- ================= 镜灵点亮仪式层 ================= -->
+<div id="ritual">
+  <div class="mirror-orb">◐</div>
+  <p class="ritual-text serif">镜灵已点亮 · L1</p>
+</div>
+
+<!-- ================= 人工确认门（不可关闭） ================= -->
+<div id="gate">
+  <div class="gate-box">
+    <h2 style="margin-bottom:8px">人工确认门</h2>
+    <p style="margin-bottom:8px">强判断档会给出更明确的倾向性表述——但它依旧只是参考视角，不是替你做的决定。</p>
+    <p class="caption" style="margin-bottom:var(--block-gap)">这扇门没有「关闭」按钮：确认开启，或者放弃。</p>
+    <button class="btn-primary" onclick="gateConfirm()">确认开启强判断</button>
+    <button class="btn-ghost" onclick="gateAbort()">放弃，保持当前档位</button>
+  </div>
+</div>
+
+<!-- ================= 反馈面板 ================= -->
+<button id="fab" onclick="openFb()">✎ 记一笔感受</button>
+<div id="fb-panel">
+  <div class="fb-box">
+    <!-- 记录视图 -->
+    <div id="fb-edit">
+      <h2 style="margin-bottom:4px">记一笔感受</h2>
+      <p class="caption">当前所在页面已自动记录：<span id="fb-page" style="color:var(--accent-gold)"></span></p>
+      <div class="fb-tags" id="fb-tags"></div>
+      <textarea id="fb-text" placeholder="想到什么写什么，比如：这一步我犹豫了，因为……"></textarea>
+      <button class="btn-primary" style="margin-top:12px" onclick="saveFb()">记下</button>
+      <button class="btn-ghost" onclick="openFbList()">查看反馈清单</button>
+      <button class="btn-ghost" onclick="closeFb()">先不记，返回</button>
+    </div>
+    <!-- 清单视图 -->
+    <div id="fb-list" style="display:none">
+      <h2 style="margin-bottom:4px">反馈清单</h2>
+      <p class="caption" style="margin-bottom:12px">共 <span class="num" id="fb-count">0</span> 条 · 仅存本机浏览器</p>
+      <div id="fb-items"></div>
+      <button class="btn-primary" style="margin-top:12px" onclick="exportFb()">导出反馈（复制 + 下载 txt）</button>
+      <button class="btn-ghost" onclick="backToFbEdit()">返回记一笔</button>
+      <button class="btn-ghost" onclick="closeFb()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+ * AETHEL 棱镜 · S1 体验沙箱
+ * 分区：①状态与持久化 ②导航 ③引导旅程 ④同步率组件
+ *       ⑤打分与回偿 ⑥仪式与主界面 ⑦降级演示 ⑧反馈面板
+ * ============================================================ */
+
+/* ---------- ① 状态与持久化 ---------- */
+var LS_STATE = "prism_sandbox_state_v1";
+var LS_FB = "prism_sandbox_feedback_v1";
+
+var state = {
+  nickname: "",
+  sync: 0,            /* C-24 冻结序列：12 → +32pp → 44 → +5pp → 49，禁随机化 */
+  authorized: false,
+  scored: false,
+  scoreCount: 0,
+  mirrorLit: false,   /* C-12：完成首次双轨解读后点亮 */
+  adviceLevel: "observe",
+  degraded: false,
+  reportSeen: false,  /* 重推演门禁：须已完成基线报告（双轨支撑） */
+  step: "s-welcome"
+};
+
+function saveState() {
+  try { localStorage.setItem(LS_STATE, JSON.stringify(state)); } catch (e) {}
+}
+function loadState() {
+  try {
+    var raw = localStorage.getItem(LS_STATE);
+    if (raw) { var s = JSON.parse(raw); for (var k in s) { state[k] = s[k]; } }
+  } catch (e) {}
+}
+function loadFb() {
+  try { return JSON.parse(localStorage.getItem(LS_FB) || "[]"); } catch (e) { return []; }
+}
+function saveFbList(list) {
+  try { localStorage.setItem(LS_FB, JSON.stringify(list)); } catch (e) {}
+}
+
+/* ---------- ② 导航 ---------- */
+var currentScreen = "s-welcome";
+var settingsFrom = "s-main";
+var currentTab = "tab-today";
+
+function go(id) {
+  var screens = document.querySelectorAll(".screen, .screen-xj");
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove("active");
+  document.getElementById(id).classList.add("active");
+  currentScreen = id;
+  state.step = id;
+  saveState();
+  window.scrollTo(0, 0);
+  /* 四 Tab 底栏仅在主界面显示 */
+  document.getElementById("tabbar").style.display = (id === "s-main") ? "flex" : "none";
+  if (id === "s-main") enterMain();
+}
+
+function pageLabel() {
+  var map = {
+    "s-welcome": "欢迎页", "s-register": "注册页", "s-hello": "注册完成首屏",
+    "s-auth": "模拟授权页", "s-loading": "基线报告生成中", "s-report": "基线报告",
+    "s-dual": "首次双轨解读", "s-settings": "设置页", "s-xj-lobby": "玄机模式-门厅"
+  };
+  if (currentScreen === "s-xj-result") {
+    var xt = { yiji: "轻推演-今日宜忌", window: "轻推演-时机窗口", hepan: "中推演-姻缘合盘",
+               number: "中推演-数字能量", week: "中推演-本周运势", caiyun: "中推演-财运时机",
+               naming: "重推演-起名顾问", timing: "重推演-重大择时" };
+    return "玄机模式-" + (xt[xjCurrent] || "推演结果");
+  }
+  if (currentScreen === "s-main") {
+    var t = { "tab-today": "主界面-今日", "tab-timing": "主界面-时机",
+              "tab-review": "主界面-复盘", "tab-avatar": "主界面-分身" };
+    return t[currentTab] || "主界面";
+  }
+  return map[currentScreen] || currentScreen;
+}
+
+/* ---------- ③ 引导旅程 ---------- */
+function doRegister() {
+  var v = document.getElementById("nickname").value.trim();
+  if (!v) v = "朋友";
+  state.nickname = v;
+  state.sync = 12; /* C-24：注册初值 12%，禁止随机化 */
+  saveState();
+  go("s-hello");
+}
+
+/* 授权页：六类健康数据逐项开关（沙箱演示标注） */
+var AUTH_ITEMS = ["心率", "心率变异性 HRV", "睡眠", "活动", "步数", "正念"];
+function buildAuthList() {
+  var box = document.getElementById("auth-list");
+  AUTH_ITEMS.forEach(function (name, i) {
+    var row = document.createElement("div");
+    row.className = "auth-row";
+    row.innerHTML =
+      '<div><p>' + name + '</p><p class="caption">沙箱演示 · 不会读取真实数据</p></div>' +
+      '<button class="switch on" data-i="' + i + '" aria-label="' + name + '开关"></button>';
+    box.appendChild(row);
+  });
+  box.addEventListener("click", function (e) {
+    if (e.target.classList && e.target.classList.contains("switch")) {
+      e.target.classList.toggle("on");
+    }
+  });
+}
+
+function doAuthorize() {
+  state.authorized = true;
+  saveState();
+  go("s-loading");
+  runLoading(function () {
+    /* 授权完成 → 同步率 12 → 44（+32pp，spring 跳动，当秒反馈） */
+    state.sync = 44;
+    saveState();
+    renderReport();
+    go("s-report");
+    requestAnimationFrame(function () { tickSync("report-sync-slot", 12, 44, "+32%"); });
+  });
+}
+function skipAuthorize() {
+  document.getElementById("auth-reject-note").style.display = "block";
+  state.authorized = false;
+  saveState();
+  /* 拒绝路径：报告仍可用（DEV-001 仅手动输入降级），同步率保持 12% */
+  setTimeout(function () {
+    go("s-loading");
+    runLoading(function () {
+      state.sync = 12;
+      saveState();
+      renderReport();
+      go("s-report");
+    });
+  }, 900);
+}
+
+/* 基线报告生成：模拟加载 <3s */
+function runLoading(done) {
+  var fill = document.getElementById("load-fill");
+  fill.style.width = "0%";
+  var p = 0;
+  var timer = setInterval(function () {
+    p += 20;
+    fill.style.width = Math.min(p, 100) + "%";
+    if (p >= 100) { clearInterval(timer); setTimeout(done, 250); }
+  }, 300); /* 总计约 1.8s */
+}
+
+/* 五维状态卡（演示数据，Body/Mind/Heart/Spark/Legacy） */
+var DIM_CARDS = [
+  { k: "Body · 身体",   t: "近 7 天 deep sleep 平均 48 分钟，低于你的常见区间。" },
+  { k: "Mind · 心绪",   t: "HRV 午后偏低，下午看起来是压力较集中的时段。" },
+  { k: "Heart · 关系",  t: "本周正念记录 2 次，情绪自评整体平稳。" },
+  { k: "Spark · 创造",  t: "晚间屏幕时间较长；状态好的时段多出现在上午。" },
+  { k: "Legacy · 传承", t: "传承维度尚未开放——现在显示 0%，是因为我们还没有你的数据。" }
+];
+function renderReport() {
+  state.reportSeen = true; /* 基线报告已生成：重推演的双轨支撑门禁解锁 */
+  saveState();
+  var box = document.getElementById("dim-cards");
+  box.innerHTML = "";
+  DIM_CARDS.forEach(function (d) {
+    var div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML =
+      '<div class="wl-row"><p style="font-weight:600">' + d.k + '</p>' +
+      '<span class="pill tag-demo">演示数据</span></div>' +
+      '<p style="margin-top:8px;color:var(--text-secondary)">' + d.t + '</p>';
+    box.appendChild(div);
+  });
+  if (state.scored) showScoreDone(false);
+}
+
+/* ---------- ④ 同步率组件（44px 条 + 四维度面板 + spring 跳动） ---------- */
+function syncBarHTML(slotId) {
+  return '' +
+  '<div class="syncbar" id="syncbar-' + slotId + '" onclick="toggleSyncPanel(\'' + slotId + '\')">' +
+    '<div style="min-width:52px"><div class="sb-lv serif">镜灵 L1</div></div>' +
+    '<div class="sb-track"><div class="sb-fill" id="sb-fill-' + slotId + '"></div></div>' +
+    '<div class="sb-pct num" id="sb-pct-' + slotId + '">0%</div>' +
+  '</div>' +
+  '<div class="sync-panel sync-panel-' + slotId + '">' +
+    dimRowHTML("数据", "data", slotId) + dimRowHTML("校准", "calibration", slotId) +
+    dimRowHTML("决策", "decision", slotId) + dimRowHTML("传承", "legacy", slotId) +
+  '</div>';
+}
+function dimRowHTML(label, key, slotId) {
+  return '<div class="dim-row">' +
+    '<div class="dim-head"><span>' + label + '</span><span class="num" id="dim-val-' + key + '-' + slotId + '">0%</span></div>' +
+    '<div class="dim-track"><div class="dim-fill" id="dim-fill-' + key + '-' + slotId + '"></div></div>' +
+    '<p class="caption" id="dim-note-' + key + '-' + slotId + '" style="margin-top:4px;display:none">即将开放——现在显示 0%，是因为我们还没有你的数据。</p>' +
+  '</div>';
+}
+function mountSyncBar(slotId) {
+  var slot = document.getElementById(slotId);
+  if (!slot) return;
+  slot.innerHTML = syncBarHTML(slotId);
+  paintSync(slotId, state.sync);
+}
+function paintSync(slotId, pct) {
+  var fill = document.getElementById("sb-fill-" + slotId);
+  var num = document.getElementById("sb-pct-" + slotId);
+  if (fill) fill.style.width = pct + "%";
+  if (num) num.textContent = pct + "%";
+  /* 四维度：决策/传承 0% 诚实显示（C-24：未开放维度不得隐藏或编造） */
+  var dims = {
+    data: pct,
+    calibration: state.scored ? 5 : 0,
+    decision: 0,
+    legacy: 0
+  };
+  ["data", "calibration", "decision", "legacy"].forEach(function (k) {
+    var v = document.getElementById("dim-val-" + k + "-" + slotId);
+    var f = document.getElementById("dim-fill-" + k + "-" + slotId);
+    var n = document.getElementById("dim-note-" + k + "-" + slotId);
+    if (v) v.textContent = dims[k] + "%";
+    if (f) f.style.width = dims[k] + "%";
+    if (n) n.style.display = (dims[k] === 0) ? "block" : "none";
+  });
+}
+function toggleSyncPanel(slotId) {
+  var p = document.querySelector(".sync-panel-" + slotId);
+  if (p) p.classList.toggle("open");
+}
+/* 同步率数值跳动：600ms spring 感，+XX% 浮动标签 */
+function tickSync(slotId, from, to, deltaLabel) {
+  var num = document.getElementById("sb-pct-" + slotId);
+  var fill = document.getElementById("sb-fill-" + slotId);
+  var bar = document.getElementById("syncbar-" + slotId);
+  if (!num || !fill) return;
+  var start = null;
+  var DUR = 600;
+  function frame(ts) {
+    if (!start) start = ts;
+    var t = Math.min((ts - start) / DUR, 1);
+    /* 近似 spring(0.8)：easeOutBack 过冲曲线 ≈ cubic-bezier(0.34,1.56,0.64,1) */
+    var e = springEase(t);
+    var val = Math.round(from + (to - from) * e);
+    num.textContent = val + "%";
+    fill.style.width = Math.max(0, Math.min(val, 100)) + "%";
+    if (t < 1) requestAnimationFrame(frame);
+    else { num.textContent = to + "%"; fill.style.width = to + "%"; paintSync(slotId, to); }
+  }
+  requestAnimationFrame(frame);
+  if (deltaLabel && bar) {
+    var tag = document.createElement("span");
+    tag.className = "float-delta num";
+    tag.textContent = deltaLabel;
+    bar.appendChild(tag);
+    setTimeout(function () { tag.remove(); }, 700);
+  }
+}
+function springEase(t) {
+  /* easeOutBack：c1=1.70158，加档至 2.2 强化 spring 感，数学上稳定无迭代 */
+  var c1 = 2.2, c3 = c1 + 1, u = t - 1;
+  return 1 + c3 * u * u * u + c1 * u * u;
+}
+
+/* ---------- ⑤ 体感打分与「上次你教过我」回偿 ---------- */
+document.getElementById("score-row").addEventListener("click", function (e) {
+  var btn = e.target.closest("button");
+  if (!btn || state.scored) return;
+  state.scored = true;
+  state.scoreCount += 1;
+  saveState();
+  btn.classList.add("sel");
+  showScoreDone(true);
+});
+function showScoreDone(withTick) {
+  document.getElementById("score-done").style.display = "block";
+  var row = document.getElementById("score-row");
+  var btns = row.querySelectorAll("button");
+  for (var i = 0; i < btns.length; i++) btns[i].style.opacity = btns[i].classList.contains("sel") ? "1" : ".35";
+  /* 打分完成 → 同步率 +5pp（C-24 冻结增量，当秒反馈）；授权路径即 44%→49% */
+  if (withTick) {
+    var from = state.sync;
+    state.sync = state.sync + 5;
+    saveState();
+    tickSync("report-sync-slot", from, state.sync, "+5%");
+  } else {
+    paintSync("report-sync-slot", state.sync);
+  }
+}
+
+/* ---------- ⑥ 镜灵点亮仪式（1200ms 两段式）与主界面 ---------- */
+function startRitual() {
+  var r = document.getElementById("ritual");
+  r.classList.add("active");
+  setTimeout(function () {
+    r.classList.remove("active");
+    state.mirrorLit = true; /* C-12：完成首次双轨解读后点亮 */
+    saveState();
+    go("s-main");
+  }, 1200);
+}
+
+function enterMain() {
+  document.getElementById("hello-name").textContent = state.nickname || "朋友";
+  document.getElementById("hello-sub").textContent = " · 沙箱演示中";
+  mountSyncBar("main-sync-slot");
+  /* 镜灵状态 */
+  var face = document.getElementById("mirror-face");
+  var name = document.getElementById("mirror-name");
+  var hint = document.getElementById("mirror-hint");
+  if (state.mirrorLit) {
+    face.className = "mirror-face gold";
+    name.textContent = "镜灵 · L1";
+    hint.textContent = "已点亮 · 它还在慢慢认识你";
+  } else {
+    face.className = "mirror-face grey";
+    name.textContent = "镜灵 · 未点亮";
+    hint.textContent = "完成首次双轨解读后点亮";
+  }
+  /* 回偿标注：打分后，同类判断处显示「上次你教过我」 */
+  document.getElementById("taught-badge").style.display = state.scored ? "block" : "none";
+  document.getElementById("review-score-count").textContent = state.scoreCount;
+  paintAdviceSeg();
+  paintDegrade();
+  switchTab(currentTab);
+}
+
+function switchTab(tabId) {
+  currentTab = tabId;
+  var pages = document.querySelectorAll(".tabpage");
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove("active");
+  document.getElementById(tabId).classList.add("active");
+  var btns = document.querySelectorAll("#tabbar button");
+  for (var j = 0; j < btns.length; j++) {
+    btns[j].classList.toggle("on", btns[j].getAttribute("data-tab") === tabId);
+  }
+}
+
+/* 建议强度三档 + 人工确认门 */
+var ADVICE_DESC = {
+  observe: "观察档：只呈现数据和状态，不给倾向。",
+  suggest: "建议档：在状态之外，给一条温和的参考建议。",
+  assert: "强判断档：给出更明确的倾向性表述——依旧只是参考视角。"
+};
+document.getElementById("advice-seg").addEventListener("click", function (e) {
+  var btn = e.target.closest("button");
+  if (!btn) return;
+  var lv = btn.getAttribute("data-lv");
+  if (lv === "assert" && state.adviceLevel !== "assert") {
+    document.getElementById("gate").classList.add("active"); /* 确认门：无 X，点遮罩不关闭 */
+    return;
+  }
+  state.adviceLevel = lv;
+  saveState();
+  paintAdviceSeg();
+});
+function paintAdviceSeg() {
+  var btns = document.querySelectorAll("#advice-seg button");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle("on", btns[i].getAttribute("data-lv") === state.adviceLevel);
+  }
+  document.getElementById("advice-desc").textContent = ADVICE_DESC[state.adviceLevel];
+}
+function gateConfirm() {
+  state.adviceLevel = "assert";
+  saveState();
+  document.getElementById("gate").classList.remove("active");
+  paintAdviceSeg();
+}
+function gateAbort() {
+  document.getElementById("gate").classList.remove("active");
+  paintAdviceSeg(); /* 回弹到原档位 */
+}
+
+/* ---------- ⑦ 降级态演示 ---------- */
+function toggleDegrade() {
+  state.degraded = !state.degraded;
+  saveState();
+  paintDegrade();
+}
+function paintDegrade() {
+  document.getElementById("sw-degrade").classList.toggle("on", state.degraded);
+  var n = document.getElementById("today-normal");
+  var d = document.getElementById("today-degraded");
+  /* 300ms ease-in-out 降级切换 */
+  n.style.opacity = state.degraded ? "0" : "1";
+  setTimeout(function () {
+    n.style.display = state.degraded ? "none" : "block";
+    d.style.display = state.degraded ? "block" : "none";
+    d.style.opacity = state.degraded ? "1" : "0";
+  }, state.degraded ? 300 : 0);
+}
+
+/* ---------- ⑦.5 玄机模式 · 独立天窗 + 天机克制（v0.2 概念演示） ---------- */
+var LS_XJ = "prism_sandbox_xj_ledger_v1";
+var XJ_LIMITS = { light: 3, mid: 3, heavy: 2 };          /* 天机克制三档：日3/周3/月2 */
+var XJ_COOLDOWN_MS = { mid: 24*3600*1000, heavy: 7*24*3600*1000 }; /* 同类冷却 */
+var XJ_TIER_LABEL = { light: "轻推演", mid: "中推演", heavy: "重推演" };
+var XJ_FULL_TEXT = { light: "天机不可尽泄，明天再来", mid: "天机不可尽泄，下周再来", heavy: "天机不可尽泄，下月再来" };
+var XJ_TYPES = [
+  { key:"yiji",   tier:"light", name:"今日宜忌" },
+  { key:"window", tier:"light", name:"时机窗口 · 详览" },
+  { key:"hepan",  tier:"mid",   name:"姻缘合盘" },
+  { key:"number", tier:"mid",   name:"数字能量" },
+  { key:"week",   tier:"mid",   name:"本周运势" },
+  { key:"caiyun", tier:"mid",   name:"财运时机", red:true },
+  { key:"naming", tier:"heavy", name:"起名顾问" },
+  { key:"timing", tier:"heavy", name:"重大择时" }
+];
+/* 推演结果（演示数据；红区问题一律状态化重写，禁判决句式） */
+var XJ_RESULTS = {
+  yiji: "今日气机收敛，节奏偏缓。<br>适合：整理旧物、复盘本周、早点休息。<br>可以暂缓：开启新的重大话题、做大的决定。<br><br>这只是一种状态视角——日子怎么过，始终由你。",
+  window: "今日三个窗口（演示数据）：<br>· 09:00–11:00 专注窗口（数据轨）<br>· 14:00–16:00 沟通窗口（玄机轨）<br>· 21:00–23:00 休整窗口（双轨印证）<br><br>窗口是参考视角，错过一个也不必懊恼。",
+  hepan: "演示数据：你们的状态节律存在错位——一方的专注高峰在上午，另一方在晚间更放松。<br><br>这或许提示：重要对话可以约在对双方都从容的时段，而不是累了的时候。<br><br>关系走向不由一次合盘决定，这只是观察你们节奏的一面镜子。",
+  number: "演示数据：这串数字的节律偏「动」——变化多、收束少。<br><br>把它当作自我叙事的一面小镜子就好。数字本身决定不了什么，你的状态才是变量。",
+  week: "演示数据：本周节奏前紧后松。前半周适合处理存量事务，后半周状态曲线回升，或许更适合见人、表达、开启话题。<br><br>运势在这里不是判决，是一张节奏参考图。",
+  caiyun: "你问的是「财运」。这类问题棱镜不给答案，只给状态——<br><br>数据轨显示，你近两周 deep sleep 偏少、HRV 午后偏低，身体处在紧绷期。从状态视角看：涉及钱的重大决定，或许值得等睡眠回到你的常见区间之后再谈。<br><br>这不是吉凶判断，是「状态好时再看牌」的提醒。",
+  naming: "演示数据：基于你描述的期待方向（沉稳、可信赖），候选字根方向：带「山」「木」意象的字，音律上以开口音收尾更稳。<br><br>示例方向：岳、岑、楷、棠。<br><br>名字是祝福不是预言——候选仅供参考，最后拍板的是你们。",
+  timing: "演示数据：你的数据轨显示上午 9–11 点专注力更稳；时机轨上，周四上午的窗口与之重合。<br><br>双轨印证：签约、发布类安排，周四上午可作为候选时段之一。<br><br>择时给的是「状态与节奏的交汇点」，不是结果的保证书。"
+};
+var xjCurrent = null;      /* 当前推演的类型 key */
+var xjCostPaid = false;
+
+function dayKey() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate(); }
+function weekKey() {
+  var d = new Date(), onejan = new Date(d.getFullYear(), 0, 1);
+  var wk = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+  return d.getFullYear() + "-W" + wk;
+}
+function monthKey() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth()+1); }
+
+function xjLedger() {
+  var l;
+  try { l = JSON.parse(localStorage.getItem(LS_XJ) || "null"); } catch (e) { l = null; }
+  if (!l) l = { light:{day:"",n:0}, mid:{week:"",n:0,last:{}}, heavy:{month:"",n:0,last:{}} };
+  /* 周期滚动：跨天/跨周/跨月自动归零（端侧账本，不上云） */
+  if (l.light.day !== dayKey())   { l.light = { day: dayKey(), n: 0 }; }
+  if (l.mid.week !== weekKey())   { l.mid.week = weekKey(); l.mid.n = 0; }
+  if (l.heavy.month !== monthKey()) { l.heavy.month = monthKey(); l.heavy.n = 0; }
+  return l;
+}
+function xjSave(l) { try { localStorage.setItem(LS_XJ, JSON.stringify(l)); } catch (e) {} }
+
+/* 某类型的可用性：{ok, reason} */
+function xjAvailability(l, t) {
+  if (t.tier === "heavy" && !(state.reportSeen || state.mirrorLit)) {
+    return { ok: false, reason: "need_report" };
+  }
+  var bucket = l[t.tier];
+  if (bucket.n >= XJ_LIMITS[t.tier]) return { ok: false, reason: "full" };
+  var cd = XJ_COOLDOWN_MS[t.tier];
+  if (cd && bucket.last && bucket.last[t.key]) {
+    var left = bucket.last[t.key] + cd - Date.now();
+    if (left > 0) return { ok: false, reason: "cooldown", left: left };
+  }
+  return { ok: true };
+}
+function fmtLeft(ms) {
+  var h = Math.ceil(ms / 3600000);
+  if (h < 24) return "约 " + h + " 小时后";
+  return "约 " + Math.ceil(h / 24) + " 天后";
+}
+
+/* 开门仪式：300ms 过渡（.screen-xj 动画），门厅渲染 */
+function openXj() { renderXjLobby(); go("s-xj-lobby"); }
+function exitXj() { go("s-main"); }   /* 退出即回主界面，首页不留痕迹 */
+
+function renderXjLobby() {
+  var l = xjLedger(); xjSave(l);
+  var box = document.getElementById("xj-tiers");
+  box.innerHTML = "";
+  ["light", "mid", "heavy"].forEach(function (tier) {
+    var bucket = l[tier];
+    var left = XJ_LIMITS[tier] - bucket.n;
+    var unit = tier === "light" ? "今日" : (tier === "mid" ? "本周" : "本月");
+    var card = document.createElement("div");
+    card.className = "card xj-tier";
+    var html = '<div class="tier-head"><h2>' + XJ_TIER_LABEL[tier] + '</h2>' +
+      '<span class="pill ' + (left > 0 ? "pill-fate" : "pill-grey") + ' num">' + unit + '剩余 ' + left + '/' + XJ_LIMITS[tier] + '</span></div>';
+    if (left <= 0) {
+      html += '<p class="caption" style="color:var(--track-fate)">「' + XJ_FULL_TEXT[tier] + '」</p>';
+      if (tier === "heavy") html += '<p class="caption" style="margin-top:4px">次数上限不出售——这不是付费墙，是克制。</p>';
+    }
+    if (tier === "heavy" && !(state.reportSeen || state.mirrorLit)) {
+      /* 重推演要求双轨支撑：无基线报告 → 证据不足降级卡（禁空窗） */
+      html += '<div class="degrade-card" style="margin:8px 0 0">' +
+        '<p class="dc-title">证据不足</p>' +
+        '<p>缺什么：数据轨状态输入（基线报告）。</p>' +
+        '<p style="margin-top:8px">当前基于什么：无——纯空问不开盘。</p>' +
+        '<p style="margin-top:8px">完成一次基线报告后，重推演才会开放。</p></div>';
+    }
+    card.innerHTML = html;
+    XJ_TYPES.filter(function (t) { return t.tier === tier; }).forEach(function (t) {
+      var av = xjAvailability(l, t);
+      var b = document.createElement("button");
+      b.className = "xj-cast-btn";
+      var sub = "";
+      if (av.reason === "cooldown") sub = "同类冷却中 · " + fmtLeft(av.left) + "可再推演";
+      if (av.reason === "full") sub = XJ_FULL_TEXT[tier];
+      if (av.reason === "need_report") sub = "需先完成基线报告";
+      if (t.red) sub = (sub ? sub + " · " : "") + "红区 · 状态化重写演示";
+      if (t.tier === "mid" && !sub) sub = "代价：完成后需一次体感校验回执";
+      if (t.tier === "heavy" && av.ok) sub = "代价：完成后需一次数据校准动作";
+      b.innerHTML = t.name + (sub ? '<span class="sub">' + sub + '</span>' : "");
+      b.disabled = !av.ok;
+      if (av.ok) b.onclick = function () { runCast(t.key); };
+      card.appendChild(b);
+    });
+    box.appendChild(card);
+  });
+  /* 过度求测疏导：当日轻推演预算打满 → 温和疏导卡 */
+  document.getElementById("xj-soothe").style.display = (l.light.n >= XJ_LIMITS.light) ? "block" : "none";
+}
+
+/* 发起一次推演：记账 → 出结果页 */
+function runCast(key) {
+  var t = null;
+  for (var i = 0; i < XJ_TYPES.length; i++) if (XJ_TYPES[i].key === key) t = XJ_TYPES[i];
+  if (!t) return;
+  var l = xjLedger();
+  var av = xjAvailability(l, t);
+  if (!av.ok) { renderXjLobby(); return; }
+  l[t.tier].n += 1;
+  if (XJ_COOLDOWN_MS[t.tier]) l[t.tier].last[t.key] = Date.now();
+  xjSave(l);
+  xjCurrent = key;
+  xjCostPaid = false;
+  /* 渲染结果页 */
+  document.getElementById("xj-res-title").textContent = t.name;
+  document.getElementById("xj-res-tier").textContent = XJ_TIER_LABEL[t.tier] + " · 端侧推演（演示）";
+  document.getElementById("xj-res-body").innerHTML = '<p style="font-size:var(--fs-body)">' + XJ_RESULTS[key] + '</p>';
+  document.getElementById("xj-res-rewrite").style.display = t.red ? "block" : "none";
+  /* 代价区 */
+  var cost = document.getElementById("xj-cost");
+  var scoreRow = document.getElementById("xj-score-row");
+  var calibBtn = document.getElementById("xj-calib-btn");
+  var costDone = document.getElementById("xj-cost-done");
+  var finish = document.getElementById("xj-finish-btn");
+  costDone.style.display = "none";
+  var btns = scoreRow.querySelectorAll("button");
+  for (var j = 0; j < btns.length; j++) { btns[j].classList.remove("sel"); btns[j].style.opacity = "1"; }
+  if (t.tier === "light") {
+    cost.style.display = "none";
+    finish.disabled = false; finish.style.opacity = "1";
+  } else if (t.tier === "mid") {
+    cost.style.display = "block";
+    document.getElementById("xj-cost-title").textContent = "代价 · 体感校验回执";
+    document.getElementById("xj-cost-desc").textContent = "这次视角对你有帮助吗？你教它一次，它下次的判断会记得。";
+    scoreRow.style.display = "flex"; calibBtn.style.display = "none";
+    finish.disabled = true; finish.style.opacity = ".4";
+  } else {
+    cost.style.display = "block";
+    document.getElementById("xj-cost-title").textContent = "代价 · 数据校准动作";
+    document.getElementById("xj-cost-desc").textContent = "重推演要求双轨支撑。完成一次数据校准（演示），这次推演才算完整。";
+    scoreRow.style.display = "none"; calibBtn.style.display = "block";
+    finish.disabled = true; finish.style.opacity = ".4";
+  }
+  go("s-xj-result");
+}
+/* 中推演代价：体感校验回执 */
+document.getElementById("xj-score-row").addEventListener("click", function (e) {
+  var btn = e.target.closest("button");
+  if (!btn || xjCostPaid) return;
+  btn.classList.add("sel");
+  var btns = this.querySelectorAll("button");
+  for (var i = 0; i < btns.length; i++) btns[i].style.opacity = btns[i].classList.contains("sel") ? "1" : ".35";
+  xjMarkCostPaid();
+});
+/* 重推演代价：数据校准动作（演示） */
+function xjCalibDone() { if (!xjCostPaid) xjMarkCostPaid(); }
+function xjMarkCostPaid() {
+  xjCostPaid = true;
+  document.getElementById("xj-cost-done").style.display = "block";
+  var finish = document.getElementById("xj-finish-btn");
+  finish.disabled = false; finish.style.opacity = "1";
+}
+function finishXj() {
+  if (xjCostPaid === false) {
+    var t = null;
+    for (var i = 0; i < XJ_TYPES.length; i++) if (XJ_TYPES[i].key === xjCurrent) t = XJ_TYPES[i];
+    if (t && t.tier !== "light") return; /* 代价未付清，不放行 */
+  }
+  xjCurrent = null;
+  openXj(); /* 回到门厅看账本变化（可能触发疏导卡） */
+}
+
+/* ---------- ⑧ 反馈面板 ---------- */
+var FB_TAGS = ["看不懂", "不信任", "不舒服", "喜欢这里", "想关掉", "操作太烦", "文案别扭", "其他"];
+var FB_NEGATIVE = { "看不懂": 1, "不信任": 1, "不舒服": 1, "想关掉": 1, "操作太烦": 1, "文案别扭": 1 };
+var fbSelTags = {};
+
+function buildFbTags() {
+  var box = document.getElementById("fb-tags");
+  FB_TAGS.forEach(function (t) {
+    var b = document.createElement("button");
+    b.textContent = t;
+    b.onclick = function () {
+      fbSelTags[t] = !fbSelTags[t];
+      b.classList.toggle("sel", !!fbSelTags[t]);
+      b.classList.toggle("negative", !!fbSelTags[t] && !!FB_NEGATIVE[t]);
+    };
+    box.appendChild(b);
+  });
+}
+function openFb() {
+  document.getElementById("fb-page").textContent = pageLabel();
+  document.getElementById("fb-edit").style.display = "block";
+  document.getElementById("fb-list").style.display = "none";
+  document.getElementById("fb-panel").classList.add("active");
+}
+function closeFb() {
+  document.getElementById("fb-panel").classList.remove("active");
+  /* 清空本次选择 */
+  fbSelTags = {};
+  document.getElementById("fb-text").value = "";
+  var btns = document.querySelectorAll("#fb-tags button");
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove("sel", "negative");
+}
+function saveFb() {
+  var tags = Object.keys(fbSelTags).filter(function (k) { return fbSelTags[k]; });
+  var text = document.getElementById("fb-text").value.trim();
+  if (!tags.length && !text) { closeFb(); return; }
+  var list = loadFb();
+  list.push({
+    ts: new Date().toISOString(),
+    page: pageLabel(),
+    tags: tags,
+    text: text,
+    sync: state.sync,
+    mirrorLit: state.mirrorLit
+  });
+  saveFbList(list);
+  closeFb();
+}
+function openFbList() {
+  var list = loadFb();
+  document.getElementById("fb-count").textContent = list.length;
+  var box = document.getElementById("fb-items");
+  box.innerHTML = "";
+  if (!list.length) {
+    box.innerHTML = '<p class="caption" style="padding:16px 0">还没有记录。走完旅程，随时点右下角「记一笔感受」。</p>';
+  }
+  list.slice().reverse().forEach(function (it) {
+    var div = document.createElement("div");
+    div.className = "fb-item";
+    var tags = it.tags.length ? it.tags.join(" / ") : "（未选标签）";
+    div.innerHTML =
+      '<p class="fb-meta num">' + fmtTs(it.ts) + ' · ' + escapeHtml(it.page) + '</p>' +
+      '<p style="font-size:var(--fs-body)"><span style="color:var(--accent-gold)">' + escapeHtml(tags) + '</span></p>' +
+      (it.text ? '<p style="margin-top:4px;color:var(--text-secondary)">' + escapeHtml(it.text) + '</p>' : '');
+    box.appendChild(div);
+  });
+  document.getElementById("fb-edit").style.display = "none";
+  document.getElementById("fb-list").style.display = "block";
+  document.getElementById("fb-panel").classList.add("active");
+  if (currentScreen !== "s-settings") { /* 从设置进入时保持面板即可 */ }
+}
+function backToFbEdit() { openFb(); }
+function fmtTs(iso) {
+  var d = new Date(iso);
+  function p(n) { return (n < 10 ? "0" : "") + n; }
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " +
+         p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+}
+function escapeHtml(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+/* 导出：拼接全部记录 + 时间戳 → 复制到剪贴板 + 下载 txt */
+function exportFb() {
+  var list = loadFb();
+  var lines = [
+    "AETHEL 棱镜 · S1 体验沙箱反馈导出",
+    "棱镜体验沙箱 v0.2.1（朋友体验版）反馈",
+    "版本：SPEC-S1-sandbox v0.2.1（朋友体验版）",
+    "导出时间：" + fmtTs(new Date().toISOString()),
+    "体验者昵称：" + (state.nickname || "（未填）"),
+    "同步率终点：" + state.sync + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
+    "共 " + list.length + " 条记录",
+    "==================================================",
+    ""
+  ];
+  list.forEach(function (it, i) {
+    lines.push("#" + (i + 1) + " [" + fmtTs(it.ts) + "] 页面：" + it.page);
+    lines.push("    标签：" + (it.tags.length ? it.tags.join("、") : "（无）"));
+    if (it.text) lines.push("    感受：" + it.text);
+    lines.push("");
+  });
+  var txt = lines.join("\n");
+  /* 复制到剪贴板（file:// 下可能失败，降级为选中文本提示） */
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).catch(function () {});
+  }
+  /* 下载 txt */
+  var blob = new Blob(["﻿" + txt], { type: "text/plain;charset=utf-8" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "prism_sandbox_feedback_" + Date.now() + ".txt";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* ---------- 设置：返回 / 重置旅程 ---------- */
+function backFromSettings() { go(settingsFrom); }
+function resetJourney() {
+  if (!window.confirm("重置旅程将清除昵称、同步率、镜灵状态与玄机推演账本（反馈记录保留）。确定吗？")) return;
+  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); } catch (e) {}
+  state = { nickname: "", sync: 0, authorized: false, scored: false, scoreCount: 0,
+            mirrorLit: false, adviceLevel: "observe", degraded: false, reportSeen: false, step: "s-welcome" };
+  location.reload();
+}
+
+/* ---------- 启动 ---------- */
+buildAuthList();
+buildFbTags();
+loadState();
+/* 玄机模式页面不持久恢复（独立天窗：退出不留痕，重进从门厅起） */
+if (state.step === "s-xj-lobby" || state.step === "s-xj-result") {
+  state.step = state.mirrorLit ? "s-main" : "s-welcome";
+}
+/* 恢复进度：已完成旅程 → 直接进主界面 */
+if (state.step === "s-main" || state.mirrorLit) {
+  go("s-main");
+} else if (state.step && document.getElementById(state.step) && state.step !== "s-loading") {
+  if (state.step === "s-report") { renderReport(); mountSyncBar("report-sync-slot"); }
+  go(state.step);
+} else {
+  go("s-welcome");
+}
+/* 报告页与主界面的同步率条挂载 */
+if (document.getElementById("report-sync-slot")) mountSyncBar("report-sync-slot");
+</script>
+</body>
+</html>
