@@ -671,7 +671,7 @@ input,textarea{font-family:inherit}
       <div class="card" style="text-align:center">
         <div class="mirror-face grey" id="mirror-face">◐</div>
         <p class="serif" style="font-size:var(--fs-subtitle)" id="mirror-name">镜灵 · 未点亮</p>
-        <p class="caption" style="margin-top:4px" id="mirror-hint">完成首次对照解读后点亮</p>
+        <p class="caption" style="margin-top:4px" id="mirror-hint">完成你的第一次对照解读后点亮</p>
       </div>
       <div class="card">
         <h2 style="margin-bottom:4px">建议强度</h2>
@@ -1266,7 +1266,7 @@ function enterMain() {
   } else {
     face.className = "mirror-face grey";
     name.textContent = "镜灵 · 未点亮";
-    hint.textContent = "完成首次对照解读后点亮";
+    hint.textContent = "完成你的第一次对照解读后点亮";
   }
   /* 回偿标注：打分后，同类判断处显示「上次你教过我」 */
   document.getElementById("taught-badge").style.display = state.scored ? "block" : "none";
