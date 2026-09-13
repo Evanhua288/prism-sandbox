@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.2.1</title>
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-sandbox v0.5.0</title>
 <!--
-  AETHEL 棱镜 · S1 切片体验沙箱（假数据真体验）
+  AETHEL 棱镜 · 体验沙箱 v0.5「本体养成版」（假数据真体验）
   单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开
-  设计 tokens / 同步率数值 / 文案全部抄自 prism/constants/constants.json 与 SPEC-S1/S2 冻结规格
+  v0.5：首页立数字分身本体（它学你、记你、帮你）+ 投喂养成模块（方向/关卡/相似度/模仿测试/焚毁回显）
+        玄机模式降级为界面里的一扇天窗入口（内容与克制设计原样保留）
 -->
 <style>
 /* ============ 设计 tokens（constants.json ui_tokens 冻结值） ============ */
@@ -358,6 +359,38 @@ input,textarea{font-family:inherit}
   font-size:12px;line-height:1.6;resize:none;white-space:pre;
 }
 .export-tip{color:var(--accent-gold);font-size:var(--fs-caption);margin-top:8px}
+
+/* ============ v0.5 · 投喂养成 ============ */
+.grow-hero{text-align:center;border-color:var(--accent-gold)}
+.grow-score{font-size:44px;font-weight:700;color:var(--accent-gold);line-height:1.2;margin:4px 0 8px}
+.dir-btn{
+  display:block;width:100%;text-align:left;padding:14px 16px;margin-bottom:12px;
+  background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--r-card);
+  color:var(--text-primary);font-size:var(--fs-body);
+  transition:border-color .2s var(--ease-feedback);
+}
+.dir-btn:active{border-color:var(--accent-gold)}
+.dir-btn b{font-size:var(--fs-subtitle)}
+.dir-btn .sub{display:block;font-size:var(--fs-caption);color:var(--text-secondary);margin-top:4px}
+.lv-btn{
+  display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:10px;
+  background:#0E1A2F;border:1px solid var(--border-subtle);border-radius:var(--r-button);
+  color:var(--text-primary);font-size:var(--fs-body);
+  transition:opacity .2s var(--ease-feedback),border-color .2s var(--ease-feedback);
+}
+.lv-btn .sub{display:block;font-size:var(--fs-caption);color:var(--text-secondary);margin-top:2px}
+.lv-btn:disabled{opacity:.55;cursor:default}
+.lv-btn.done{border-color:var(--semantic-normal)}
+.mem-card{
+  border:1px solid var(--accent-gold);background:rgba(201,162,39,.07);
+  border-radius:var(--r-card);padding:var(--card-padding);margin:var(--card-gap) 0;
+  animation:fadein .3s var(--ease-feedback);
+}
+.mimic-line{font-size:var(--fs-subtitle);line-height:1.6;margin:8px 0 12px}
+.mimic-fix{
+  display:none;border:1px solid var(--semantic-normal);background:rgba(91,168,124,.08);
+  border-radius:var(--r-button);padding:10px 12px;margin-top:10px;font-size:var(--fs-caption);
+}
 </style>
 </head>
 <body>
@@ -369,23 +402,29 @@ input,textarea{font-family:inherit}
       <div class="ritual-font" style="color:var(--accent-gold)">✦ 棱镜</div>
       <div class="caption" style="margin-top:8px">AETHEL PRISM</div>
     </div>
-    <h1 style="margin-bottom:8px">决策辅助与自我认知工具</h1>
-    <p class="caption" style="margin-bottom:16px">这是「棱镜」产品的体验 Demo · 全部数据均为演示数据，不会读取你的任何真实信息</p>
+    <h1 style="margin-bottom:8px">棱镜是你的数字分身</h1>
+    <p style="color:var(--accent-gold);font-size:var(--fs-subtitle);margin-bottom:16px">它学你、记你、帮你。</p>
     <p style="color:var(--text-secondary);margin-bottom:12px">
-      把你的健康数据变成一面镜子：看清状态、了解节奏，为日常决定多一个参考视角。
+      <strong style="color:var(--text-primary)">这是什么：</strong>一个只住在你这台设备上的数字分身。你的照片、简历、声音、习惯，都只在这台设备上用，出了这台设备它什么都带不走。
     </p>
     <p style="color:var(--text-secondary);margin-bottom:12px">
-      它给出的每一个判断都只是视角，不是答案。做决定的人，始终是你。
+      <strong style="color:var(--text-primary)">你能做什么：</strong>亲手喂它——喂童年照片、工作简历、家人相册、你的声音和作息，看它一点点长成你的样子；还能出题考它：「这句话像我说的吗？」
+    </p>
+    <p style="color:var(--text-secondary);margin-bottom:12px">
+      <strong style="color:var(--text-primary)">做完得到什么：</strong>一个越来越像你的分身——能陪你聊天、帮你把关决定、惦记你的作息。像到什么程度，页面顶端那个百分比会老实告诉你。
+    </p>
+    <p class="caption" style="margin-bottom:var(--block-gap)">
+      里面还藏着一扇「玄机天窗」：今日宜忌、择时这类推演收在那个小房间里，只是本体的一扇窗，不是这个产品的全部。
     </p>
     <p style="margin-bottom:var(--block-gap)">
       不用任何说明，凭直觉随便点就好。任何瞬间有感觉——喜欢、不舒服、看不懂、想关掉——点右下角金色按钮记下来，你的感受会直接变成产品改进。
     </p>
     <div class="card">
       <span class="pill tag-demo">体验沙箱</span>
-      <p class="caption" style="margin-top:8px">本页面为 S1 切片演示环境，全部内容为演示数据，不会读取你的任何真实信息。</p>
+      <p class="caption" style="margin-top:8px">本页全部内容为演示数据，不会读取你的任何真实信息；你喂的、你写的，都只存在这台设备的浏览器里。</p>
     </div>
-    <button class="btn-primary" onclick="go('s-register')">开始体验</button>
-    <div class="footer-ai">SPEC-S1-sandbox v0.4 · 朋友内测版 · 对应 S1 切片（假数据真体验）</div>
+    <button class="btn-primary" onclick="go('s-register')">开始养成我的分身</button>
+    <div class="footer-ai">SPEC-sandbox v0.5.0 · 朋友体验版（本体养成） · 假数据真体验</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（模拟） ================= -->
@@ -420,7 +459,7 @@ input,textarea{font-family:inherit}
     <div style="padding-top:64px;text-align:center">
       <div class="mirror-face grey" style="margin-bottom:24px">◐</div>
       <h2 class="serif" style="margin-bottom:16px">这是你的第一面镜子。</h2>
-      <p style="color:var(--text-secondary)">同步率 <span class="num" style="color:var(--accent-gold);font-size:var(--fs-subtitle)">12%</span>，它会随着你的使用生长。</p>
+      <p style="color:var(--text-secondary)">分身有多像你：<span class="num" style="color:var(--accent-gold);font-size:var(--fs-subtitle)">12%</span>，它会随着你的投喂和相处生长。</p>
       <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
       <p class="caption" style="margin-bottom:var(--block-gap)">四个维度里未开放的会诚实显示 0%——它没有假装已经很懂你。</p>
       <button class="btn-primary" onclick="go('s-auth')">继续</button>
@@ -442,7 +481,7 @@ input,textarea{font-family:inherit}
     </div>
     <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
     <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
-    <div class="footer-ai">授权后同步率 +32pp → 44%（冻结值，当秒反馈）</div>
+    <div class="footer-ai">授权后「分身有多像你」立刻 12% → 44%（当秒可见）</div>
   </section>
 
   <!-- ================= 屏 4 · 基线报告生成（<3s 加载表演示） ================= -->
@@ -462,7 +501,7 @@ input,textarea{font-family:inherit}
       <p class="serif" style="font-size:var(--fs-subtitle)">这是你的第一面镜子。7 天后它会更像你。</p>
       <div style="margin-top:8px">
         <span class="pill tag-demo">演示数据</span>
-        <span class="pill pill-grey">◔ 置信度：中</span>
+        <span class="pill pill-grey">◔ 把握：中</span>
       </div>
     </div>
     <h2 style="margin:var(--block-gap) 0 12px">五维状态</h2>
@@ -482,31 +521,31 @@ input,textarea{font-family:inherit}
       </div>
       <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
     </div>
-    <button class="btn-primary" onclick="go('s-dual')">查看首次双轨解读</button>
+    <button class="btn-primary" onclick="go('s-dual')">查看首次对照解读</button>
     <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
   </section>
 
   <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
   <section class="screen" id="s-dual">
-    <h1 style="padding-top:24px;margin-bottom:4px">首次双轨解读</h1>
-    <p class="caption" style="margin-bottom:var(--block-gap)">同一段时间，两条轨道各自看一眼，再对照。</p>
+    <h1 style="padding-top:24px;margin-bottom:4px">首次对照解读</h1>
+    <p class="caption" style="margin-bottom:var(--block-gap)">同一段时间，两个角度各自看一眼，再对照。</p>
     <div class="dual-card">
       <div class="dual-col dual-data">
-        <h3>数据轨</h3>
+        <h3>数据视角</h3>
         <p>近 7 天睡眠与 HRV 趋势显示，身体恢复偏慢，节奏或许适合放缓一些。</p>
         <p class="caption" style="margin-top:8px;color:var(--track-data)">演示数据 · 基于睡眠/HRV 样本</p>
       </div>
       <div class="dual-col dual-fate">
-        <h3>玄机轨</h3>
+        <h3>历法视角</h3>
         <p>今日节气交替，气机收敛，时机窗口偏向休整与复盘，而非开启新事。</p>
         <p class="caption" style="margin-top:8px;color:var(--track-fate)">预演，不是预言 · 一种状态视角</p>
       </div>
     </div>
     <div class="aligned-strip">
-      <strong>双轨印证</strong> · 两条轨道指向相近的方向，下方为高置信建议。
+      <strong>两条线索指向一致</strong> · 两个角度看到相近的方向，下方为把握较高的建议。
     </div>
     <div class="card" style="margin-top:var(--card-gap)">
-      <span class="pill pill-aligned" style="margin-bottom:8px">双轨印证 · 高置信</span>
+      <span class="pill pill-aligned" style="margin-bottom:8px">两条线索一致 · 把握较高</span>
       <p style="margin-top:8px">未来两天看起来适合低强度恢复：早点休息，把重要决定往后排一排，也许会更从容。</p>
       <p class="caption" style="margin-top:8px">观察档措辞 · 仅为参考视角</p>
     </div>
@@ -535,8 +574,9 @@ input,textarea{font-family:inherit}
       <div class="guide-card" id="today-guide" style="display:none">
         <h2>第一次来？可以这样玩 👇</h2>
         <ol>
-          <li>先看下面两张卡片——这是「棱镜」每天早上会给你的东西：你身体的状态 + 一句参考建议。</li>
-          <li>点底部「时机」，看看今天什么时段适合做什么；那里还藏着一个「玄机模式」，可以去翻翻。</li>
+          <li>先点底部「养成」——选一个你最希望分身帮你的方向，然后开始喂它：照片、简历、声音、作息，看它一点点像你。</li>
+          <li>再看下面两张卡片——这是「棱镜」每天早上会给你的东西：你身体的状态 + 一句参考建议。</li>
+          <li>点底部「时机」，看看今天什么时段适合做什么；那里还藏着一扇「玄机天窗」，可以去翻翻。</li>
           <li>任何瞬间有感觉——喜欢、看不懂、不舒服——点右下角金色「✎ 记一笔感受」，你的感受会直接变成产品改进。</li>
         </ol>
         <button class="guide-close" onclick="dismissGuide()">知道了，不再显示</button>
@@ -562,8 +602,8 @@ input,textarea{font-family:inherit}
           <p class="dc-title">证据不足</p>
           <p>缺什么：设备数据未接入，近 30 分钟没有新样本。</p>
           <p style="margin-top:8px">当前基于什么：本地演示样例数据。</p>
-          <p style="margin-top:8px">置信度已降级——这一页暂时不给判断，只保留引导。</p>
-          <p class="caption" style="margin-top:12px">想恢复正常演示？到设置里关掉「演示：证据不足降级态」即可。</p>
+          <p style="margin-top:8px">现在证据还不够，我不瞎猜——这一页暂时不给判断，只保留引导。</p>
+          <p class="caption" style="margin-top:12px">想恢复正常演示？到设置里关掉「演示：证据不足时的样子」即可。</p>
         </div>
       </div>
       <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
@@ -631,7 +671,7 @@ input,textarea{font-family:inherit}
       <div class="card" style="text-align:center">
         <div class="mirror-face grey" id="mirror-face">◐</div>
         <p class="serif" style="font-size:var(--fs-subtitle)" id="mirror-name">镜灵 · 未点亮</p>
-        <p class="caption" style="margin-top:4px" id="mirror-hint">完成首次双轨解读后点亮</p>
+        <p class="caption" style="margin-top:4px" id="mirror-hint">完成首次对照解读后点亮</p>
       </div>
       <div class="card">
         <h2 style="margin-bottom:4px">建议强度</h2>
@@ -644,7 +684,61 @@ input,textarea{font-family:inherit}
         <p class="caption" style="margin-top:12px" id="advice-desc">观察档：只呈现数据和状态，不给倾向。</p>
       </div>
       <div class="card">
-        <p class="caption">同步率四维：数据 / 校准 / 决策 / 传承。决策与传承维度尚未开放，会诚实显示 0%——即将开放，是因为我们还没有你的数据。</p>
+        <p class="caption">「分身有多像你」由四部分慢慢长成：你喂的数据、你教它的纠正、决策、传承。后两部分还没开放，会诚实显示 0%——因为我们还没有你足够的数据。</p>
+      </div>
+      <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
+    </div>
+
+    <!-- Tab · 养成（v0.5 本体养成：方向 → 投喂关卡 → 相似度 → 模仿测试 → 焚毁回显） -->
+    <div class="tabpage" id="tab-grow">
+      <h2 style="margin-bottom:4px">养成我的分身</h2>
+      <p class="caption" style="margin-bottom:12px">这是什么：你亲手喂大的数字分身。你能做什么：选方向、喂数据、考它像不像你。做完得到什么：一个越来越懂你、只住在这台设备上的分身。</p>
+
+      <!-- 重点培育方向：未选时先选方向 -->
+      <div id="grow-dir-pick" style="display:none">
+        <div class="card" style="border-color:var(--accent-gold)">
+          <h2 style="margin-bottom:4px">第一步：选一个重点培育方向</h2>
+          <p class="caption">每个人最希望分身帮自己的方向不同。选定后，投喂顺序和角色卡都会向它倾斜——之后随时可以换。</p>
+        </div>
+        <div id="grow-dir-list"></div>
+      </div>
+
+      <!-- 已选方向后的养成主区 -->
+      <div id="grow-main" style="display:none">
+        <!-- 相似度大字报 -->
+        <div class="card grow-hero">
+          <p class="caption">分身有多像你</p>
+          <p class="grow-score num"><span id="grow-pct">20</span>%</p>
+          <div style="height:10px;border-radius:var(--r-pill);background:#0E1A2F;overflow:hidden">
+            <div id="grow-fill" style="height:100%;border-radius:var(--r-pill);background:var(--accent-gold);width:20%;transition:width .6s var(--ease-spring)"></div>
+          </div>
+          <p class="caption" id="grow-cap-note" style="margin-top:8px;display:none;color:var(--accent-gold)">95% 是演示的顶——最后 5% 要用日子慢慢喂，急不来。</p>
+          <p class="caption" style="margin-top:8px">喂一关数据 +6~10，模仿测试「像我」+4。这个数只跟你自己比，不排行、不攀比。</p>
+        </div>
+
+        <!-- 角色卡 -->
+        <div class="card" id="grow-role-card"></div>
+
+        <!-- 投喂任务关卡 -->
+        <h2 style="margin:var(--block-gap) 0 8px">投喂关卡</h2>
+        <p class="caption" style="margin-bottom:12px">一关喂一类数据。演示态：不真读你的文件，点一下模拟投喂。顺序按你选的方向排好了。</p>
+        <div id="grow-levels"></div>
+
+        <!-- 分身记忆：喂出来的记忆片段 -->
+        <div id="grow-mems"></div>
+
+        <!-- 模仿测试 -->
+        <h2 style="margin:var(--block-gap) 0 8px">模仿测试</h2>
+        <p class="caption" style="margin-bottom:12px">分身学着你说一句话，你来当裁判：像我，就加分；不像我，它记下来修正。</p>
+        <div class="card" id="mimic-card"></div>
+
+        <!-- 焚毁回显 -->
+        <div class="card" style="border-style:dashed">
+          <p style="font-size:var(--fs-body)">🔒 你投喂的这些都只在这台设备上。</p>
+          <p class="caption" style="margin-top:4px">出了这台设备，它什么都带不走；你随时可以一把火烧干净。</p>
+          <button class="btn-ghost" style="color:var(--semantic-alert);margin-top:8px" onclick="burnGrow()">一键焚毁投喂数据</button>
+          <p id="grow-burn-ok" style="display:none;color:var(--semantic-normal);margin-top:8px;font-size:var(--fs-subtitle)">已焚毁 ✓ 这台设备上已不存任何投喂痕迹</p>
+        </div>
       </div>
       <div class="footer-ai">由棱镜AI生成 · 提供参考视角</div>
     </div>
@@ -658,17 +752,17 @@ input,textarea{font-family:inherit}
     </div>
     <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
-      <p class="caption">这是 AETHEL 棱镜的体验沙箱，对应 S1 切片规格（SPEC-S1）。全部内容为演示数据，不读取任何真实信息，用于 Demo Day 用户体验测试。含玄机模式概念演示（待评审提案 V0.1）。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.4（朋友内测版）</p>
-      <p class="caption" style="margin-top:4px">v0.4 更新：新增「你关心的事」让演示跟你有关；可免昵称访客模式；玄机模式明示四类不推演（拒答不耗次）；中/重推演先答三问；焚毁结果可见；反馈可一键复制或邮件发回。v0.3：新手引导卡 + 全站白话化 + 导出修复。</p>
+      <p class="caption">这是 AETHEL 棱镜的体验沙箱，「数字分身本体 + 玄机天窗」的体验版：本体是投喂养成（选方向、喂数据、看相似度、考模仿），玄机模式只是界面里的一扇天窗。全部内容为演示数据，不读取任何真实信息，你喂的、你写的都只存在这台设备的浏览器里。</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-sandbox v0.5.0（朋友体验版 · 本体养成）</p>
+      <p class="caption" style="margin-top:4px">v0.5 更新：首页立数字分身本体（它学你、记你、帮你）；新增投喂养成模块（重点方向 / 投喂关卡 / 相似度 / 模仿测试 / 一键焚毁回显）；玄机模式收进一扇天窗入口，内容原样保留；全站白话化。v0.4：你关心的事、访客模式、四类不推演、认真三问、焚毁可见、反馈双通道。</p>
     </div>
     <div class="card">
       <div class="auth-row">
         <div>
-          <p>演示：证据不足降级态</p>
-          <p class="caption">打开后，首页数据卡变为「证据不足」降级卡</p>
+          <p>演示：证据不足时的样子</p>
+          <p class="caption">打开后，首页数据卡变为「证据不足，我不瞎猜」的样子</p>
         </div>
-        <button class="switch" id="sw-degrade" onclick="toggleDegrade()" aria-label="降级态演示开关"></button>
+        <button class="switch" id="sw-degrade" onclick="toggleDegrade()" aria-label="证据不足演示开关"></button>
       </div>
     </div>
     <div class="card">
@@ -676,8 +770,8 @@ input,textarea{font-family:inherit}
       <p class="caption" style="margin-bottom:12px">你记下的每一笔感受都只存在这台设备上。</p>
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
-    <button class="btn-ghost" style="color:var(--semantic-alert)" onclick="resetJourney()">重置旅程（清除昵称/同步率/镜灵状态）</button>
-    <div class="footer-ai">SPEC-S1-sandbox v0.4 · 深色唯一主题</div>
+    <button class="btn-ghost" style="color:var(--semantic-alert)" onclick="resetJourney()">重置旅程（清除昵称、养成进度与分身状态）</button>
+    <div class="footer-ai">SPEC-sandbox v0.5.0 · 深色唯一主题</div>
   </section>
 
   <!-- ================= 屏 9 · 玄机模式门厅（独立天窗，v0.3 白话化） ================= -->
@@ -743,7 +837,7 @@ input,textarea{font-family:inherit}
     </div>
     <div class="card" id="xj-res-body"></div>
     <div class="card" id="xj-res-rewrite" style="display:none;border-color:var(--track-fate)">
-      <p class="caption" style="color:var(--track-fate)">红区问题 · 已状态化重写</p>
+      <p class="caption" style="color:var(--track-fate)">红区问题 · 只给状态，不给答案</p>
       <p class="caption" style="margin-top:4px">这类问题棱镜不给答案，只给状态。原始问法不会被记录。</p>
     </div>
     <!-- 代价区：中推演=体感校验回执；重推演=数据校准动作（演示） -->
@@ -766,6 +860,7 @@ input,textarea{font-family:inherit}
 <!-- ================= 四 Tab 底栏（仅主界面显示） ================= -->
 <nav id="tabbar" style="display:none">
   <button data-tab="tab-today" onclick="switchTab('tab-today')"><span class="ti">☀</span>今日</button>
+  <button data-tab="tab-grow" onclick="switchTab('tab-grow')"><span class="ti">✦</span>养成</button>
   <button data-tab="tab-timing" onclick="switchTab('tab-timing')"><span class="ti">◷</span>时机</button>
   <button data-tab="tab-review" onclick="switchTab('tab-review')"><span class="ti">↺</span>复盘</button>
   <button data-tab="tab-avatar" onclick="switchTab('tab-avatar')"><span class="ti">◐</span>分身</button>
@@ -892,7 +987,7 @@ function pageLabel() {
     "s-welcome": "欢迎页", "s-register": "注册页", "s-focus": "选择关心的事",
     "s-hello": "注册完成首屏",
     "s-auth": "模拟授权页", "s-loading": "基线报告生成中", "s-report": "基线报告",
-    "s-dual": "首次双轨解读", "s-settings": "设置页", "s-xj-lobby": "玄机模式-门厅",
+    "s-dual": "首次对照解读", "s-settings": "设置页", "s-xj-lobby": "玄机模式-门厅",
     "s-xj-ask": "玄机模式-认真三问"
   };
   if (currentScreen === "s-xj-result") {
@@ -902,7 +997,7 @@ function pageLabel() {
     return "玄机模式-" + (xt[xjCurrent] || "推演结果");
   }
   if (currentScreen === "s-main") {
-    var t = { "tab-today": "主界面-今日", "tab-timing": "主界面-时机",
+    var t = { "tab-today": "主界面-今日", "tab-grow": "主界面-养成", "tab-timing": "主界面-时机",
               "tab-review": "主界面-复盘", "tab-avatar": "主界面-分身" };
     return t[currentTab] || "主界面";
   }
@@ -1171,13 +1266,16 @@ function enterMain() {
   } else {
     face.className = "mirror-face grey";
     name.textContent = "镜灵 · 未点亮";
-    hint.textContent = "完成首次双轨解读后点亮";
+    hint.textContent = "完成首次对照解读后点亮";
   }
   /* 回偿标注：打分后，同类判断处显示「上次你教过我」 */
   document.getElementById("taught-badge").style.display = state.scored ? "block" : "none";
   document.getElementById("review-score-count").textContent = state.scoreCount;
   paintAdviceSeg();
   paintDegrade();
+  renderGrow(); /* v0.5：养成模块渲染 */
+  /* v0.5 本体先行：还没选培育方向时，主界面默认落在「养成」页 */
+  if (!grow.dir) currentTab = "tab-grow";
   switchTab(currentTab);
   /* v0.3 新手引导卡：未关闭过就显示（只显示一次旅程，关闭后不再打扰） */
   var guideSeen = false;
@@ -1281,13 +1379,13 @@ var XJ_TYPES = [
 /* 推演结果（演示数据；红区问题一律状态化重写，禁判决句式） */
 var XJ_RESULTS = {
   yiji: "今日气机收敛，节奏偏缓。<br>适合：整理旧物、复盘本周、早点休息。<br>可以暂缓：开启新的重大话题、做大的决定。<br><br>这只是一种状态视角——日子怎么过，始终由你。",
-  window: "今日三个窗口（演示数据）：<br>· 09:00–11:00 专注窗口（数据轨）<br>· 14:00–16:00 沟通窗口（玄机轨）<br>· 21:00–23:00 休整窗口（双轨印证）<br><br>窗口是参考视角，错过一个也不必懊恼。",
+  window: "今日三个窗口（演示数据）：<br>· 09:00–11:00 专注窗口（数据视角）<br>· 14:00–16:00 沟通窗口（历法视角）<br>· 21:00–23:00 休整窗口（两条线索一致）<br><br>窗口是参考视角，错过一个也不必懊恼。",
   hepan: "演示数据：你们的状态节律存在错位——一方的专注高峰在上午，另一方在晚间更放松。<br><br>这或许提示：重要对话可以约在对双方都从容的时段，而不是累了的时候。<br><br>关系走向不由一次合盘决定，这只是观察你们节奏的一面镜子。",
   number: "演示数据：这串数字的节律偏「动」——变化多、收束少。<br><br>把它当作自我叙事的一面小镜子就好。数字本身决定不了什么，你的状态才是变量。",
   week: "演示数据：本周节奏前紧后松。前半周适合处理存量事务，后半周状态曲线回升，或许更适合见人、表达、开启话题。<br><br>运势在这里不是判决，是一张节奏参考图。",
   caiyun: "你问的是「财运」。这类问题棱镜不给答案，只给状态——<br><br>你的身体数据显示，近两周深度睡眠偏少、午后心率变异性偏低，身体正处在紧绷期。从状态视角看：涉及钱的重大决定，或许值得等睡眠回到你的常见水平之后再谈。<br><br>这不是吉凶判断，是「状态好时再看牌」的提醒。",
   naming: "演示数据：基于你描述的期待方向（沉稳、可信赖），候选字根方向：带「山」「木」意象的字，音律上以开口音收尾更稳。<br><br>示例方向：岳、岑、楷、棠。<br><br>名字是祝福不是预言——候选仅供参考，最后拍板的是你们。",
-  timing: "演示数据：你的数据轨显示上午 9–11 点专注力更稳；时机轨上，周四上午的窗口与之重合。<br><br>双轨印证：签约、发布类安排，周四上午可作为候选时段之一。<br><br>择时给的是「状态与节奏的交汇点」，不是结果的保证书。"
+  timing: "演示数据：你的数据显示上午 9–11 点专注力更稳；历法窗口上，周四上午与之重合。<br><br>两条线索指向一致：签约、发布类安排，周四上午可作为候选时段之一。<br><br>择时给的是「状态与节奏的交汇点」，不是结果的保证书。"
 };
 var xjCurrent = null;      /* 当前推演的类型 key */
 var xjCostPaid = false;
@@ -1465,7 +1563,7 @@ function runCast(key) {
   } else {
     cost.style.display = "block";
     document.getElementById("xj-cost-title").textContent = "代价 · 数据校准动作";
-    document.getElementById("xj-cost-desc").textContent = "重推演要求双轨支撑。完成一次数据校准（演示），这次推演才算完整。";
+    document.getElementById("xj-cost-desc").textContent = "问大事需要你的身体数据打底。完成一次数据校准（演示），这次推演才算完整。";
     scoreRow.style.display = "none"; calibBtn.style.display = "block";
     finish.disabled = true; finish.style.opacity = ".4";
   }
@@ -1504,6 +1602,253 @@ function finishXj() {
     xjCurrent = null;
     openXj(); /* 回到门厅看账本变化（可能触发疏导卡） */
   }, 900);
+}
+
+/* ---------- ⑦.6 投喂养成（v0.5 本体养成模块 · 全部演示数据 · 仅存本机） ---------- */
+var LS_GROW = "prism_sandbox_grow_v1";
+var GROW_BASE = 20, GROW_CAP = 95; /* 初生 20%，演示封顶 95%，最后 5% 留给日子 */
+var GROW_DIRS = [
+  { key:"moushi",   name:"谋士",     icon:"🧭", role:"帮你把事想清楚", desc:"重大选择前，多一个懂你的参考视角。它只给视角，拍板的永远是你。" },
+  { key:"guimi",    name:"闺蜜",     icon:"💬", role:"陪你聊天",       desc:"接住你的情绪，记得你说过的小事，不评判、不说教。" },
+  { key:"peihu",    name:"陪护",     icon:"🫂", role:"替你多看一眼",   desc:"惦记家里老人孩子的日常，有异常先提醒你。涉及家人时，正式版须本人也同意。" },
+  { key:"jiaoyu",   name:"教育",     icon:"📖", role:"陪你学新东西",   desc:"按你的节奏出题、复习、拆目标，不催不卷。" },
+  { key:"jiankang", name:"健康提醒", icon:"🌿", role:"整理与提醒",     desc:"整理你的作息与状态，提醒你睡觉、喝水、动起来。只做整理、提醒和就医建议，永远不做诊断。" }
+];
+var GROW_LEVELS = [
+  { key:"childhood", name:"童年照片", icon:"🖼", delta:9,  desc:"喂它几张小时候的照片（演示：不会真读你的相册）",
+    mem:"童年：「原来你小时候在外婆家长大，夏天的晚上总是在院子里乘凉数星星。」" },
+  { key:"resume",    name:"工作简历", icon:"💼", delta:8,  desc:"喂它你的工作经历（演示：不会真读你的文件）",
+    mem:"工作：「你做过三年销售才转行，最烦无效会议，做大事前习惯先睡一觉再定。」" },
+  { key:"family",    name:"家人相册", icon:"👪", delta:10, desc:"喂它家人的照片和称呼（演示：不会真读你的相册）",
+    mem:"家人：「妈妈每周日晚上给你打电话；女儿今年上小学二年级，怕黑。」" },
+  { key:"voice",     name:"日常声音", icon:"🎙", delta:7,  desc:"让它熟悉你说话的方式（演示：不会真开麦克风）",
+    mem:"语气：「你说话爱用『说实话』开头，累的时候句子会变短，开心时爱用感叹号。」" },
+  { key:"routine",   name:"作息习惯", icon:"🌙", delta:11, desc:"告诉它你的作息节奏（演示：使用示例数据）",
+    mem:"作息：「你周三总是睡得最晚，周日上午是你的回血时间，午后三点必犯困。」" }
+];
+/* 方向影响关卡排序：最相关的先喂 */
+var GROW_DIR_ORDER = {
+  moushi:   ["resume","routine","voice","family","childhood"],
+  guimi:    ["voice","family","childhood","routine","resume"],
+  peihu:    ["family","routine","voice","childhood","resume"],
+  jiaoyu:   ["routine","resume","childhood","voice","family"],
+  jiankang: ["routine","voice","resume","family","childhood"]
+};
+/* 模仿测试语句库（8 条演示）：分身学说一句话，本体当裁判 */
+var MIMIC_LINES = [
+  { t:"说实话，这事我也拿不准，要不先放一晚上，明天再说？", fix:"已记下：你拿不准的时候不爱说『明天再说』，你更常说『先搁这儿』。下次换种说法。" },
+  { t:"你上周三又熬夜了——今晚十一点前睡，我看着你。", fix:"已记下：你不喜欢被命令式的口气催睡觉，更喜欢被提醒而不是被管。下次温和一点。" },
+  { t:"这份合同金额不小，别急，把条款发我，我帮你捋一遍风险点。", fix:"已记下：你谈正事时不爱用感叹号，句子也更短。下次收着点说。" },
+  { t:"这会又拖堂了，真烦。", fix:"已记下：你烦的时候不说『真烦』，你说『又来了』。下次换你的口头禅。" },
+  { t:"妈周日打电话来的时候，记得问她膝盖好点没。", fix:"已记下：这句你认了一半——你会问膝盖，但不会用『记得问』这种安排式口气。" },
+  { t:"你女儿家长会下周二下午，别忘了提前跟老板说一声。", fix:"已记下：时间你记对了，但你说『请假』不说『跟老板说一声』。" },
+  { t:"这个方案挺好的，我完全同意，就这么办吧！", fix:"已记下：这最不像你——你做决定前从来要再放一放，不会当场拍板。这条重点修正。" },
+  { t:"累了就先停一下，天塌不下来。", fix:"已记下：意思对，但你安慰人时更毒舌一点，没这么温柔。" }
+];
+var grow = { dir: "", fed: {}, mimic: {} }; /* mimic: {0:"like"|"fix", ...} */
+
+function loadGrow() {
+  try {
+    var raw = localStorage.getItem(LS_GROW);
+    if (raw) { var g = JSON.parse(raw); for (var k in g) { grow[k] = g[k]; } }
+  } catch (e) {}
+}
+function saveGrow() {
+  try { localStorage.setItem(LS_GROW, JSON.stringify(grow)); } catch (e) {}
+}
+function growScore() {
+  var s = GROW_BASE;
+  GROW_LEVELS.forEach(function (lv) { if (grow.fed[lv.key]) s += lv.delta; });
+  for (var k in grow.mimic) { if (grow.mimic[k] === "like") s += 4; }
+  return Math.min(s, GROW_CAP);
+}
+function dirOf(key) {
+  for (var i = 0; i < GROW_DIRS.length; i++) if (GROW_DIRS[i].key === key) return GROW_DIRS[i];
+  return null;
+}
+function levelOf(key) {
+  for (var i = 0; i < GROW_LEVELS.length; i++) if (GROW_LEVELS[i].key === key) return GROW_LEVELS[i];
+  return null;
+}
+
+function renderGrow() {
+  var pick = document.getElementById("grow-dir-pick");
+  var main = document.getElementById("grow-main");
+  if (!pick || !main) return;
+  if (!grow.dir) {
+    pick.style.display = "block";
+    main.style.display = "none";
+    var box = document.getElementById("grow-dir-list");
+    box.innerHTML = "";
+    GROW_DIRS.forEach(function (d) {
+      var b = document.createElement("button");
+      b.className = "dir-btn";
+      b.innerHTML = "<b>" + d.icon + " " + d.name + "</b> · " + d.role +
+        '<span class="sub">' + d.desc + "</span>";
+      b.onclick = function () { pickGrowDir(d.key); };
+      box.appendChild(b);
+    });
+    return;
+  }
+  pick.style.display = "none";
+  main.style.display = "block";
+  /* 相似度大字报 */
+  var pct = growScore();
+  document.getElementById("grow-pct").textContent = pct;
+  document.getElementById("grow-fill").style.width = pct + "%";
+  document.getElementById("grow-cap-note").style.display = (pct >= GROW_CAP) ? "block" : "none";
+  /* 角色卡 */
+  var d = dirOf(grow.dir);
+  document.getElementById("grow-role-card").innerHTML =
+    '<div class="wl-row"><div>' +
+    '<p style="font-weight:600">' + d.icon + " 培育方向：" + d.name + " · " + d.role + "</p>" +
+    '<p class="caption" style="margin-top:4px">' + d.desc + "</p></div>" +
+    '<button class="pill pill-grey" style="background:none;cursor:pointer;flex-shrink:0" onclick="changeGrowDir()">换方向</button></div>';
+  /* 投喂关卡：按方向排序 */
+  var order = GROW_DIR_ORDER[grow.dir] || GROW_LEVELS.map(function (l) { return l.key; });
+  var lbox = document.getElementById("grow-levels");
+  lbox.innerHTML = "";
+  order.forEach(function (key, i) {
+    var lv = levelOf(key);
+    var done = !!grow.fed[key];
+    var b = document.createElement("button");
+    b.className = "lv-btn" + (done ? " done" : "");
+    b.disabled = done;
+    b.innerHTML = (done ? "✓ " : "第 " + (i + 1) + " 关 · ") + lv.icon + " " + lv.name +
+      (done ? '<span class="sub">已投喂 · 分身长出了这段记忆（+' + lv.delta + "）</span>"
+            : '<span class="sub">' + lv.desc + "</span>");
+    if (!done) b.onclick = function () { feedLevel(key, b); };
+    lbox.appendChild(b);
+  });
+  /* 分身记忆片段 */
+  var mbox = document.getElementById("grow-mems");
+  mbox.innerHTML = "";
+  var fedKeys = GROW_LEVELS.filter(function (l) { return grow.fed[l.key]; });
+  if (fedKeys.length) {
+    var h = document.createElement("h2");
+    h.style.margin = "var(--block-gap) 0 8px";
+    h.textContent = "分身长出的记忆";
+    mbox.appendChild(h);
+    fedKeys.forEach(function (lv) {
+      var div = document.createElement("div");
+      div.className = "mem-card";
+      div.innerHTML = '<p style="font-size:var(--fs-body)">' + lv.mem + "</p>" +
+        '<p class="caption" style="margin-top:4px">来自你喂的「' + lv.name + "」 · 只存在这台设备上</p>";
+      mbox.appendChild(div);
+    });
+  }
+  renderMimic();
+}
+function pickGrowDir(key) {
+  grow.dir = key;
+  saveGrow();
+  renderGrow();
+}
+function changeGrowDir() {
+  if (!window.confirm("换个重点培育方向？已喂过的数据和相似度都会保留，只改之后的侧重。")) return;
+  grow.dir = "";
+  saveGrow();
+  renderGrow();
+}
+/* 投喂一关：模拟消化 → 相似度 spring 跳动 → 解锁记忆 */
+function feedLevel(key, btn) {
+  if (grow.fed[key]) return;
+  btn.disabled = true;
+  btn.innerHTML = "⏳ 正在喂给分身…";
+  var from = growScore();
+  setTimeout(function () {
+    grow.fed[key] = true;
+    saveGrow();
+    renderGrow();
+    var to = growScore();
+    tickGrow(from, to, "+" + (to - from) + "%");
+  }, 900);
+}
+function tickGrow(from, to, deltaLabel) {
+  var num = document.getElementById("grow-pct");
+  var fill = document.getElementById("grow-fill");
+  if (!num || !fill) return;
+  var start = null, DUR = 600;
+  function frame(ts) {
+    if (!start) start = ts;
+    var t = Math.min((ts - start) / DUR, 1);
+    var e = springEase(t);
+    var val = Math.round(from + (to - from) * e);
+    num.textContent = val;
+    fill.style.width = Math.max(0, Math.min(val, 100)) + "%";
+    if (t < 1) requestAnimationFrame(frame);
+    else { num.textContent = to; fill.style.width = to + "%"; renderGrow(); }
+  }
+  requestAnimationFrame(frame);
+  if (deltaLabel) {
+    var hero = document.querySelector(".grow-hero");
+    if (hero) {
+      hero.style.position = "relative";
+      var tag = document.createElement("span");
+      tag.className = "float-delta num";
+      tag.textContent = deltaLabel;
+      hero.appendChild(tag);
+      setTimeout(function () { tag.remove(); }, 700);
+    }
+  }
+}
+/* 模仿测试：分身说一句，本体判像不像 */
+function nextMimicIdx() {
+  for (var i = 0; i < MIMIC_LINES.length; i++) if (!grow.mimic[i]) return i;
+  return -1;
+}
+function renderMimic() {
+  var card = document.getElementById("mimic-card");
+  if (!card) return;
+  var idx = nextMimicIdx();
+  var doneCount = Object.keys(grow.mimic).length;
+  if (idx === -1) {
+    card.innerHTML = '<p style="color:var(--semantic-normal)">✓ 本轮模仿测试完成（' + doneCount + "/" + MIMIC_LINES.length + "）。</p>" +
+      '<p class="caption" style="margin-top:8px">正式版里，这样的小考试会隔三差五来一次，分身随你的批改一点点收敛成你。</p>';
+    return;
+  }
+  card.innerHTML =
+    '<p class="caption">分身学说一句（第 ' + (idx + 1) + "/" + MIMIC_LINES.length + " 句）：</p>" +
+    '<p class="mimic-line serif">「' + MIMIC_LINES[idx].t + "」</p>" +
+    '<div class="score-row">' +
+    '<button onclick="mimicAnswer(true)">像我 +4</button>' +
+    '<button onclick="mimicAnswer(false)">不像我</button>' +
+    "</div>" +
+    '<div class="mimic-fix" id="mimic-fix"></div>';
+}
+function mimicAnswer(like) {
+  var idx = nextMimicIdx();
+  if (idx === -1) return;
+  var from = growScore();
+  if (like) {
+    grow.mimic[idx] = "like";
+    saveGrow();
+    renderGrow();
+    tickGrow(from, growScore(), "+4%");
+  } else {
+    grow.mimic[idx] = "fix";
+    saveGrow();
+    /* 修正回执：先把这句的修正文案亮出来，再进下一句 */
+    var fix = document.getElementById("mimic-fix");
+    if (fix) {
+      fix.textContent = "📝 " + MIMIC_LINES[idx].fix + "（修正只存这台设备）";
+      fix.style.display = "block";
+    }
+    setTimeout(renderGrow, 1600);
+  }
+}
+/* 焚毁回显：一键烧掉全部投喂养成痕迹 */
+function burnGrow() {
+  if (!window.confirm("一键焚毁将清除这台设备上的全部投喂进度、分身记忆与模仿测试记录（不可恢复）。确定吗？")) return;
+  grow.fed = {};
+  grow.mimic = {}; /* 方向保留，烧掉的是喂进去的东西 */
+  saveGrow();
+  renderGrow();
+  var ok = document.getElementById("grow-burn-ok");
+  if (ok) {
+    ok.style.display = "block";
+    setTimeout(function () { ok.style.display = "none"; }, 4000);
+  }
 }
 
 /* ---------- ⑧ 反馈面板 ---------- */
@@ -1594,11 +1939,11 @@ function escapeHtml(s) {
 function buildExportTxt() {
   var list = loadFb();
   var lines = [
-    "AETHEL 棱镜 · S1 体验沙箱反馈导出",
-    "版本：SPEC-S1-sandbox v0.4（朋友内测版）",
+    "AETHEL 棱镜 · 体验沙箱反馈导出",
+    "版本：SPEC-sandbox v0.5.0（朋友体验版 · 本体养成）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
-    "同步率终点：" + state.sync + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
+    "「分身有多像你」终点：" + state.sync + "% · 养成页相似度：" + growScore() + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
     "共 " + list.length + " 条记录",
     "==================================================",
     ""
@@ -1670,11 +2015,12 @@ function mailExport() {
 /* ---------- 设置：返回 / 重置旅程 ---------- */
 function backFromSettings() { go(settingsFrom); }
 function resetJourney() {
-  if (!window.confirm("重置旅程将清除昵称、同步率、镜灵状态与玄机推演账本（反馈记录保留）。确定吗？")) return;
-  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); localStorage.removeItem(LS_GUIDE); } catch (e) {}
+  if (!window.confirm("重置旅程将清除昵称、相似度、养成进度、镜灵状态与玄机推演账本（反馈记录保留）。确定吗？")) return;
+  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); localStorage.removeItem(LS_GUIDE); localStorage.removeItem(LS_GROW); } catch (e) {}
   state = { nickname: "", sync: 0, authorized: false, scored: false, scoreCount: 0,
             mirrorLit: false, adviceLevel: "observe", degraded: false, reportSeen: false,
             focus: "", step: "s-welcome" };
+  grow = { dir: "", fed: {}, mimic: {} };
   location.reload();
 }
 
@@ -1682,6 +2028,7 @@ function resetJourney() {
 buildAuthList();
 buildFbTags();
 loadState();
+loadGrow();
 /* 玄机模式页面不持久恢复（独立天窗：退出不留痕，重进从门厅起） */
 if (state.step === "s-xj-lobby" || state.step === "s-xj-result" || state.step === "s-xj-ask") {
   state.step = state.mirrorLit ? "s-main" : "s-welcome";
