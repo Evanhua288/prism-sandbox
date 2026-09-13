@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.6.0</title>
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.6.1</title>
 <!--
-  AETHEL 棱镜 · 体验沙箱 v0.6「信任与手感版」
+  AETHEL 棱镜 · 体验沙箱 v0.6.1「信任与手感版」补丁
   单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开
+  v0.6.1：空维度成长点小字 + 数据维度克制微进度 + 反馈写完当场可发 + 返回路径强化（无死胡同）
+          + 玄机大厅定位句 + Landing 标识轻化 + 镜灵一句人话 + 设置页「数据在哪」极简表 + 推演 7 天回看
   v0.6：首程瘦身（选 3 个维度即出第一条洞察）+ 相似度三分拆（已声明/已验证/已纠偏，演示授权只涨数据就绪度）
         + 演示标签收进页脚一行 + 时光预览 + 空状态引导 + 反馈一键发送 + 镜灵可视化与克制庆祝动效
         + 玄机前情卡片与红区人文回应 + 「更敢说」（原强判断，支持临时开一次）+ Tab 副标题
@@ -420,6 +422,36 @@ input,textarea{font-family:inherit}
   display:none;border:1px solid var(--semantic-normal);background:rgba(91,168,124,.08);
   border-radius:var(--r-button);padding:10px 12px;margin-top:10px;font-size:var(--fs-caption);
 }
+
+/* ============ v0.6.1 · 强化返回按钮（更大点击区、更明显，杜绝死胡同） ============ */
+.btn-back{
+  display:inline-flex;align-items:center;gap:4px;padding:12px 18px;min-height:44px;
+  margin-bottom:var(--card-gap);
+  background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--r-button);
+  color:var(--text-primary);font-size:var(--fs-body);
+  transition:border-color .2s var(--ease-feedback),color .2s var(--ease-feedback);
+}
+.btn-back:active{border-color:var(--accent-gold);color:var(--accent-gold)}
+
+/* ============ v0.6.1 · 维度「下一个成长点」小字 ============ */
+.growth-note{font-size:var(--fs-caption);color:var(--accent-gold);margin-top:2px}
+
+/* ============ v0.6.1 · 设置页「数据在哪」极简对照表 ============ */
+.data-map{width:100%;border-collapse:collapse;font-size:var(--fs-body)}
+.data-map td{padding:10px 4px;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+.data-map tr:last-child td{border-bottom:none}
+.data-map td:first-child{color:var(--text-secondary);white-space:nowrap;padding-right:12px}
+.data-map td:last-child{text-align:right;color:var(--text-primary)}
+
+/* ============ v0.6.1 · 推演回看标记按钮 ============ */
+.mark-row{display:flex;gap:8px;margin-top:10px}
+.mark-row button{
+  flex:1;padding:8px 0;border-radius:var(--r-button);
+  background:#0E1A2F;border:1px solid var(--border-subtle);
+  color:var(--text-secondary);font-size:var(--fs-caption);
+  transition:all .2s var(--ease-feedback);
+}
+.mark-row button.sel{background:var(--accent-gold);color:#0E1A2F;border-color:var(--accent-gold);font-weight:600}
 </style>
 </head>
 <body>
@@ -453,25 +485,27 @@ input,textarea{font-family:inherit}
       <p class="caption">不会读取你的任何真实信息；你喂的、你写的，都只存在这台设备的浏览器里。</p>
     </div>
     <button class="btn-primary" onclick="go('s-register')">开始养成我的分身</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（本地昵称，可跳过） ================= -->
   <section class="screen" id="s-register">
     <div style="padding-top:64px">
+      <button class="btn-back" onclick="go('s-welcome')">‹ 返回</button>
       <h1>怎么称呼你？</h1>
       <p class="wm" style="margin-top:8px">由棱镜AI生成 · 提供参考视角</p>
       <input class="text-input" id="nickname" maxlength="12" placeholder="输入昵称" autocomplete="off">
       <button class="btn-primary" onclick="doRegister()">进入棱镜</button>
       <button class="btn-ghost" onclick="doGuest()">跳过，先随便逛逛</button>
       <p class="caption" style="margin-top:4px">昵称只存在这台设备的浏览器里；跳过即为访客，你输入的内容不会被保存。</p>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
   <!-- ================= 屏 2.1 · 你关心的事 ================= -->
   <section class="screen" id="s-focus">
     <div style="padding-top:64px">
+      <button class="btn-back" onclick="go('s-register')">‹ 返回</button>
       <h1>最近，你最关心哪一件事？</h1>
       <p class="wm" style="margin-top:8px">由棱镜AI生成 · 提供参考视角</p>
       <p class="caption" style="margin-bottom:var(--block-gap)">选一个就行。接下来你看到的内容，都会围绕它来生成——这样你能更真实地感受「棱镜懂你」是什么感觉。</p>
@@ -480,27 +514,30 @@ input,textarea{font-family:inherit}
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('calm')">🌿 心里少点紧绷</button>
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('relate')">🤝 重要关系更顺</button>
       <button class="btn-ghost" onclick="pickFocus('')">都说不上来，随便看看</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
   <!-- ================= 屏 2.5 · 注册完成首屏 ================= -->
   <section class="screen" id="s-hello">
     <div style="padding-top:64px;text-align:center">
-      <div class="mirror-live" data-size="72" style="margin-bottom:24px"></div>
+      <div style="text-align:left"><button class="btn-back" onclick="go('s-focus')">‹ 返回</button></div>
+      <div class="mirror-live" data-size="72" style="margin-bottom:12px"></div>
+      <p class="caption" style="margin-bottom:16px">镜灵不是功能，是分身「醒过来」的程度。</p>
       <h2 class="serif" style="margin-bottom:8px">这是你的第一面镜子。</h2>
       <p class="wm" style="text-align:center">由棱镜AI生成 · 提供参考视角</p>
       <p style="color:var(--text-secondary)">分身有多像你：<span class="num" id="hello-pct" style="color:var(--accent-gold);font-size:var(--fs-subtitle)">12</span>%，它会随着你的投喂和相处生长。</p>
       <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
       <p class="caption" style="margin-bottom:var(--block-gap)">未开放的维度会诚实显示 0%——它没有假装已经很懂你。</p>
       <button class="btn-primary" onclick="go('s-auth')">继续</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
   <!-- ================= 屏 3 · 授权页（v0.6：选 3 个你最在意的维度，选完即见第一条洞察） ================= -->
   <section class="screen" id="s-auth">
-    <h1 style="padding-top:24px">授权 · 健康数据</h1>
+    <div style="padding-top:24px"><button class="btn-back" onclick="go('s-hello')">‹ 返回</button></div>
+    <h1>授权 · 健康数据</h1>
     <p class="wm" style="margin-top:8px">由棱镜AI生成 · 提供参考视角</p>
     <div class="card">
       <p style="font-size:var(--fs-body)">「这些数据只在这台手机上计算，原始数据用后即焚，留存时间 0 秒。」</p>
@@ -518,7 +555,7 @@ input,textarea{font-family:inherit}
     <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
     <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
     <p class="caption" style="margin-top:8px">授权只提升「数据就绪度」——分身有多像你，要靠你亲手喂出来。</p>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 4 · 基线报告生成（<3s 加载过场） ================= -->
@@ -528,12 +565,13 @@ input,textarea{font-family:inherit}
       <p class="caption" style="margin-top:8px">真实规格要求 3 秒内完成</p>
       <div class="loading-bar"><div class="loading-fill" id="load-fill"></div></div>
       <div class="skel"></div><div class="skel"></div><div class="skel"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
   <!-- ================= 屏 5 · 基线报告 ================= -->
   <section class="screen" id="s-report">
+    <div style="padding-top:8px"><button class="btn-back" id="report-back" onclick="reportBack()">‹ 返回</button></div>
     <div id="report-sync-slot"></div>
     <p class="caption" id="report-ready" style="display:none;color:var(--track-data);margin-bottom:12px"></p>
     <div class="card">
@@ -561,12 +599,13 @@ input,textarea{font-family:inherit}
       <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
     </div>
     <button class="btn-primary" onclick="go('s-dual')">查看首次对照解读</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
   <section class="screen" id="s-dual">
-    <h1 style="padding-top:24px;margin-bottom:4px">首次对照解读</h1>
+    <div style="padding-top:24px"><button class="btn-back" onclick="backToReport()">‹ 返回报告</button></div>
+    <h1 style="margin-bottom:4px">首次对照解读</h1>
     <p class="wm" style="margin-top:8px">由棱镜AI生成 · 提供参考视角</p>
     <p class="caption" style="margin-bottom:var(--block-gap)">同一段时间，两个角度各自看一眼，再对照。</p>
     <div class="dual-card">
@@ -594,7 +633,7 @@ input,textarea{font-family:inherit}
       <p class="caption" style="margin-top:4px">你的体感打分已经进入校准维度。</p>
     </div>
     <button class="btn-primary" onclick="startRitual()">完成解读，点亮镜灵</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 7 · 五 Tab 主界面 ================= -->
@@ -648,7 +687,7 @@ input,textarea{font-family:inherit}
           <p class="caption" style="margin-top:8px">想恢复正常演示？到设置里关掉「演示：证据不足时的样子」即可。</p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 时机 -->
@@ -690,7 +729,7 @@ input,textarea{font-family:inherit}
           <span class="pill pill-fate">单源证据</span>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 复盘（Weekly Mirror + 应验成绩单） -->
@@ -709,7 +748,9 @@ input,textarea{font-family:inherit}
         <p class="caption" style="margin-top:8px">当前记录：体感打分 <span class="num" id="review-score-count">0</span> 次。</p>
         <p class="caption" style="margin-top:8px;color:var(--accent-gold)">下一步：在「今日」或报告页给一条建议打个分，这里就开始计数。</p>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <!-- v0.6.1 · 推演回看（7 天后回来看看：你当时听了吗？） -->
+      <div id="xj-review"></div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 分身 -->
@@ -719,8 +760,11 @@ input,textarea{font-family:inherit}
       <div class="card" style="text-align:center">
         <div class="mirror-live" id="mirror-face" data-size="72" style="margin:0 auto 12px"></div>
         <p class="serif" style="font-size:var(--fs-subtitle)" id="mirror-name">镜灵 · 未点亮</p>
+        <p class="caption" style="margin-top:4px">镜灵不是功能，是分身「醒过来」的程度。</p>
         <p class="caption" style="margin-top:4px" id="mirror-hint">完成你的第一次对照解读后点亮</p>
       </div>
+      <!-- v0.6.1 · 维度面板（点开看每个维度的「下一个成长点」） -->
+      <div id="avatar-sync-slot"></div>
       <div class="card">
         <h2 style="margin-bottom:4px">建议强度</h2>
         <p class="caption" style="margin-bottom:12px">你希望它说话说到什么程度。</p>
@@ -735,7 +779,7 @@ input,textarea{font-family:inherit}
       <div class="card">
         <p class="caption">「分身有多像你」由三部分长成：<strong style="color:var(--text-primary)">已声明</strong>（你主动喂的信息）、<strong style="color:var(--text-primary)">已验证</strong>（模仿测试里你判「像我」的）、<strong style="color:var(--text-primary)">已纠偏</strong>（你纠正过它的）。决策、传承两部分还没开放，会诚实显示 0%——因为我们还没有你足够的数据。</p>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 养成（本体养成：方向 → 投喂关卡 → 相似度 → 模仿测试 → 焚毁回显） -->
@@ -801,7 +845,7 @@ input,textarea{font-family:inherit}
           <p id="grow-burn-ok" style="display:none;color:var(--semantic-normal);margin-top:8px;font-size:var(--fs-subtitle)">已焚毁 ✓ 这台设备上已不存任何投喂痕迹</p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -809,14 +853,26 @@ input,textarea{font-family:inherit}
   <section class="screen" id="s-settings">
     <div class="topbar">
       <h1>设置</h1>
-      <button class="gear" onclick="backFromSettings()" aria-label="返回">←</button>
+      <button class="btn-back" style="margin-bottom:0" onclick="backFromSettings()" aria-label="返回">‹ 返回</button>
     </div>
     <p class="wm">由棱镜AI生成 · 提供参考视角</p>
     <div class="card">
+      <h2 style="margin-bottom:8px">数据在哪</h2>
+      <table class="data-map">
+        <tr><td>昵称</td><td>这台设备的浏览器</td></tr>
+        <tr><td>投喂</td><td>这台设备的浏览器</td></tr>
+        <tr><td>推演</td><td>当场算完即焚</td></tr>
+        <tr><td>反馈</td><td>这台设备的浏览器</td></tr>
+        <tr><td>分身</td><td>只在这台设备</td></tr>
+      </table>
+      <p class="caption" style="margin-top:8px">就这些。没有服务器，没有账号，没有同步。</p>
+    </div>
+    <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
       <p class="caption">这是 AETHEL 棱镜的体验沙箱，「数字分身本体 + 玄机天窗」的体验版：本体是投喂养成（选方向、喂数据、看相似度、考模仿），玄机模式只是界面里的一扇天窗。全部内容为演示数据，不读取任何真实信息，你喂的、你写的都只存在这台设备的浏览器里。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.6.0（体验版）</p>
-      <p class="caption" style="margin-top:4px">v0.6.0 更新：首程瘦身——授权改为「选 3 个你最在意的维度」，选完立刻看到第一条洞察；相似度拆成「已声明 / 已验证 / 已纠偏」，模拟授权只涨「数据就绪度」、不再直接涨像你度；全站演示标签收进页脚一行；养成页新增「看看第 7 天 / 第 30 天」时光预览（预演，不是预言）；空状态都配上「下一步」引导；反馈改为一键发送（分享 → 邮件 → 复制兜底）；「强判断」改名「更敢说」，支持临时开一次；镜灵有了随相似度点亮的模样和克制的庆祝微动效；玄机三档加了前情卡片，红区拒答多一句人文回应；底部五个 Tab 加了副标题；「重置旅程」改为危险动作样式并保留二次确认。</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.6.1（体验版）</p>
+      <p class="caption" style="margin-top:4px">v0.6.1 更新：空维度不再只是静止的 0%——每个维度下面多了一行「下一个成长点」，数据维度打开面板时有一次克制的缓动；写完感受当场就能「发送给开发团队」，不用再进清单页；每个子页面都加上了更大更明显的「‹ 返回」，不再有死胡同；玄机大厅首行加了定位句（是分身能力的一扇窗，不是另一个产品）；首页标识更轻；镜灵旁边多了一句人话；设置页新增「数据在哪」五行极简对照表；推演完成页提示 7 天后回看，复盘 Tab 新增「推演回看」卡（可标记照做了/没照做/还说不清，只存本机）。</p>
+      <p class="caption" style="margin-top:4px">v0.6.0：首程瘦身——授权改为「选 3 个你最在意的维度」，选完立刻看到第一条洞察；相似度拆成「已声明 / 已验证 / 已纠偏」，模拟授权只涨「数据就绪度」、不再直接涨像你度；全站演示标签收进页脚一行；养成页新增「看看第 7 天 / 第 30 天」时光预览（预演，不是预言）；空状态都配上「下一步」引导；反馈改为一键发送（分享 → 邮件 → 复制兜底）；「强判断」改名「更敢说」，支持临时开一次；镜灵有了随相似度点亮的模样和克制的庆祝微动效；玄机三档加了前情卡片，红区拒答多一句人文回应；底部五个 Tab 加了副标题；「重置旅程」改为危险动作样式并保留二次确认。</p>
       <p class="caption" style="margin-top:4px">v0.5：首页立数字分身本体（它学你、记你、帮你）；新增投喂养成模块（重点方向 / 投喂关卡 / 相似度 / 模仿测试 / 一键焚毁回显）；玄机模式收进一扇天窗入口，内容原样保留；全站白话化。v0.4：你关心的事、访客模式、四类不推演、认真三问、焚毁可见、反馈双通道。</p>
     </div>
     <div class="card">
@@ -834,13 +890,14 @@ input,textarea{font-family:inherit}
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
     <button class="btn-danger" onclick="resetJourney()">⚠ 重置旅程（清除昵称、养成进度与分身状态）</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9 · 玄机模式门厅（独立天窗） ================= -->
   <section class="screen-xj" id="s-xj-lobby">
     <div class="xj-reminder">这里给的只是参考视角，不是预言</div>
     <h1 style="margin-bottom:4px">玄机模式</h1>
+    <p class="caption" style="margin-bottom:12px;color:var(--track-fate)">基于你的数据，探索更多生活节奏参考——这是分身能力的一扇窗，不是另一个产品。</p>
     <p style="color:var(--text-secondary);margin-bottom:8px">今日宜忌、姻缘合盘、数字能量、起名择时……中国人熟悉的那些「推演」，都收在这个单独的房间里。</p>
     <p class="caption" style="margin-bottom:8px">为什么单独开个房间？因为这类事要有节制：每天能推演的次数有限，用完就得明天再来——这个上限<strong style="color:var(--accent-gold)">花钱也买不了</strong>。你的生辰等信息只在这台设备上算，算完即焚；离开这个房间，首页不会留下任何痕迹。</p>
     <p class="caption" style="margin-bottom:var(--block-gap)">三档玩法：「轻推演」随口看看，不用认真（每天 3 次）；「中推演」认真问一件事，开始前会认真问你三句，别急着点（每周 3 次，答完要交一次感受回执）；「重推演」问大事，需要至少 7 天数据打底（每月 2 次，体验版仅说明正式版规则）。</p>
@@ -862,7 +919,7 @@ input,textarea{font-family:inherit}
 
     <p class="caption" style="margin:var(--block-gap) 0 12px">次数上限是产品价值观，不出售。这里没有任何「付费加算」入口。</p>
     <button class="btn-ghost" onclick="exitXj()">离开玄机模式</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9.5 · 认真三问（中/重推演的前置门槛） ================= -->
@@ -919,8 +976,9 @@ input,textarea{font-family:inherit}
       <p id="xj-cost-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，代价已付清。</p>
     </div>
     <p style="margin:var(--block-gap) 0 12px"><span class="xj-burn">◌ 本次记录阅后即焚 · 结果仅你可见，请勿截屏分享</span></p>
+    <p class="caption" style="margin-bottom:12px;color:var(--track-fate)">7 天后回来看看：你当时听了吗？复盘页「推演回看」会留着这题，只存在这台设备上。</p>
     <button class="btn-primary" id="xj-finish-btn" onclick="finishXj()">收下这个视角，离开</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.6.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.6.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
 </div><!-- /#phone -->
@@ -963,9 +1021,18 @@ input,textarea{font-family:inherit}
       <div class="fb-tags" id="fb-tags"></div>
       <textarea id="fb-text" placeholder="想到什么写什么，比如：这一步我犹豫了，因为……"></textarea>
       <button class="btn-primary" style="margin-top:12px" onclick="saveFb()">记下</button>
-      <p class="caption" style="margin-top:8px">记完后：查看反馈清单 →「发送反馈」，一键发给华雨恒，最多两步。</p>
+      <p class="caption" style="margin-top:8px">记下之后，下一屏就能直接「发送给开发团队」，不必再进清单页。</p>
       <button class="btn-ghost" onclick="openFbList()">查看反馈清单</button>
       <button class="btn-ghost" onclick="closeFb()">先不记，返回</button>
+    </div>
+    <!-- 记下成功视图（v0.6.1：写完当场可发，不必再进清单页） -->
+    <div id="fb-saved" style="display:none">
+      <h2 style="margin-bottom:4px">已记下 ✓</h2>
+      <p class="caption" style="margin-bottom:12px">这条感受只存在这台设备上。现在就可以发给开发团队，也可以稍后在清单里一起发。</p>
+      <button class="btn-primary" onclick="sendFeedback()">发送给开发团队</button>
+      <p class="export-tip" id="fb-saved-tip" style="display:none"></p>
+      <button class="btn-ghost" onclick="openFbList()">去反馈清单看看</button>
+      <button class="btn-ghost" onclick="closeFb()">完成，返回</button>
     </div>
     <!-- 清单视图 -->
     <div id="fb-list" style="display:none">
@@ -996,7 +1063,7 @@ input,textarea{font-family:inherit}
 <script>
 "use strict";
 /* ============================================================
- * AETHEL 棱镜 · S1 体验沙箱 v0.6.0
+ * AETHEL 棱镜 · S1 体验沙箱 v0.6.1
  * 分区：①状态与持久化 ②导航 ③引导旅程 ④相似度组件（三分拆）
  *       ⑤打分与回偿 ⑥仪式与主界面 ⑦降级演示 ⑦.5玄机 ⑦.6养成 ⑧反馈面板
  * ============================================================ */
@@ -1213,6 +1280,9 @@ var DIM_CARDS = [
 function renderReport() {
   state.reportSeen = true; /* 基线报告已生成：重推演的双轨支撑门禁解锁 */
   saveState();
+  /* v0.6.1 · 返回路径：完成旅程后报告页回主界面，否则回授权页 */
+  var rb = document.getElementById("report-back");
+  if (rb) rb.innerHTML = state.mirrorLit ? "‹ 返回主界面" : "‹ 返回授权页";
   /* 主建议围绕「你关心的事」生成 */
   document.getElementById("main-advice").textContent = FOCUS_ADVICE[state.focus || ""] || FOCUS_ADVICE[""];
   var box = document.getElementById("dim-cards");
@@ -1227,6 +1297,9 @@ function renderReport() {
   });
   if (state.scored) showScoreDone(false);
 }
+/* v0.6.1 · 报告页/解读页返回路径 */
+function reportBack() { go(state.mirrorLit ? "s-main" : "s-auth"); }
+function backToReport() { renderReport(); mountSyncBar("report-sync-slot"); go("s-report"); }
 
 /* ---------- ④ 相似度组件（v0.6 三分拆：已声明 / 已验证 / 已纠偏） ---------- */
 /* 真相似度只在用户实际完成投喂关卡 / 模仿测试 / 纠偏后动；演示授权不进这里 */
@@ -1268,6 +1341,13 @@ var DIM_NOTE = {
   legacy: "未开放 · 等你愿意把它交给某人继续养。",
   ready: "演示授权的结果，单独标注，不计入「像你度」。"
 };
+/* v0.6.1 · 「下一个成长点」小字：不假装满，只告诉用户下一步在哪 */
+var DIM_GROWTH = {
+  verified: "下一个成长点：做一次模仿测试，判它一句「像我」。",
+  corrected: "下一个成长点：还差 3 次纠正，镜灵会更稳。",
+  decision: "解锁条件：连续 7 天有体感打分。",
+  legacy: ""
+};
 function dimRowHTML(label, key, slotId) {
   return '<div class="dim-row">' +
     '<div class="dim-head"><span>' + label + '</span><span class="num" id="dim-val-' + key + '-' + slotId + '">0%</span></div>' +
@@ -1305,14 +1385,33 @@ function paintSync(slotId, pct) {
     if (n) {
       var note = DIM_NOTE[k] || "";
       if (!note && dims[k] === 0) note = "现在显示 0%，是因为我们还没有你的数据。";
-      n.textContent = note;
+      /* v0.6.1 · 成长点小字：空维度给下一步，决策/传承的成长提示常驻 */
+      var growth = DIM_GROWTH[k] || "";
+      if (growth && (dims[k] === 0 || k === "decision" || k === "legacy")) {
+        note = note ? note + '<br><span class="growth-note">' + growth + '</span>'
+                    : '<span class="growth-note">' + growth + '</span>';
+      }
+      n.innerHTML = note;
       n.style.display = note ? "block" : "none";
     }
   });
 }
 function toggleSyncPanel(slotId) {
   var p = document.querySelector(".sync-panel-" + slotId);
-  if (p) p.classList.toggle("open");
+  if (!p) return;
+  p.classList.toggle("open");
+  /* v0.6.1 · 数据（已声明）维度的克制微进度：打开面板时从 0 缓动到当前值一次，不循环 */
+  if (p.classList.contains("open")) {
+    var f = document.getElementById("dim-fill-declared-" + slotId);
+    if (f) {
+      var target = f.style.width;
+      f.style.transition = "none";
+      f.style.width = "0%";
+      void f.offsetWidth; /* 强制回流，让过渡重新生效 */
+      f.style.transition = "";
+      f.style.width = target;
+    }
+  }
 }
 /* 相似度数值跳动：600ms spring 感，+XX% 浮动标签 */
 function tickSync(slotId, from, to, deltaLabel) {
@@ -1433,6 +1532,7 @@ function enterMain() {
   document.getElementById("hello-name").textContent = state.nickname || "朋友";
   document.getElementById("hello-sub").textContent = " · 体验版";
   mountSyncBar("main-sync-slot");
+  mountSyncBar("avatar-sync-slot"); /* v0.6.1 · 分身页也能展开维度面板 */
   /* 今日页围绕「你关心的事」生成 */
   document.getElementById("today-advice-1").textContent = FOCUS_ADVICE[state.focus || ""] || FOCUS_ADVICE[""];
   if (state.focus) {
@@ -1449,6 +1549,7 @@ function enterMain() {
   paintAdviceSeg();
   paintDegrade();
   renderGrow(); /* 养成模块渲染 */
+  renderXjReview(); /* v0.6.1 · 复盘页推演回看卡 */
   /* 本体先行：还没选培育方向时，主界面默认落在「养成」页 */
   if (!grow.dir) currentTab = "tab-grow";
   switchTab(currentTab);
@@ -1584,6 +1685,7 @@ var XJ_RESULTS = {
 };
 var xjCurrent = null;      /* 当前推演的类型 key */
 var xjCostPaid = false;
+var xjLastCast = null;     /* v0.6.1 · 本次推演摘要（供 7 天回看） */
 
 function dayKey() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate(); }
 function weekKey() {
@@ -1723,6 +1825,13 @@ function runCast(key) {
   }
   xjCurrent = key;
   xjCostPaid = false;
+  /* v0.6.1 · 推演回看：捕获本次摘要（红区原始问法不记录，兑现「不会被记录」承诺） */
+  xjLastCast = {
+    name: t.name,
+    red: !!t.red,
+    q: t.red ? "" : (xjAskQ || ""),
+    view: XJ_RESULTS[key].replace(/<br>/g, " ").slice(0, 60)
+  };
   /* 渲染结果页 */
   document.getElementById("xj-res-title").textContent = t.name;
   document.getElementById("xj-res-tier").textContent = XJ_TIER_LABEL[t.tier] + " · 端侧推演";
@@ -1791,12 +1900,67 @@ function finishXj() {
   var btn = document.getElementById("xj-finish-btn");
   btn.disabled = true;
   btn.textContent = "✓ 本次记录已焚毁，正在离开…";
+  /* v0.6.1 · 推演回看：完整走完一次才留题（红区不留原始问法），仅存本机 */
+  if (xjLastCast) {
+    var rel = loadXjReview();
+    rel.push({ ts: new Date().toISOString(), name: xjLastCast.name, red: xjLastCast.red,
+               q: xjLastCast.q, view: xjLastCast.view, mark: "" });
+    saveXjReview(rel);
+    xjLastCast = null;
+  }
   setTimeout(function () {
     btn.textContent = "收下这个视角，离开";
     btn.disabled = false;
     xjCurrent = null;
     openXj(); /* 回到门厅看账本变化（可能触发疏导卡） */
   }, 900);
+}
+
+/* ---------- ⑦.55 推演回看（v0.6.1 · 7 天回看看你当时听了吗，仅存本机） ---------- */
+var LS_XJ_RE = "prism_sandbox_xj_review_v1";
+function loadXjReview() {
+  try { return JSON.parse(localStorage.getItem(LS_XJ_RE) || "[]"); } catch (e) { return []; }
+}
+function saveXjReview(list) {
+  try { localStorage.setItem(LS_XJ_RE, JSON.stringify(list)); } catch (e) {}
+}
+function renderXjReview() {
+  var box = document.getElementById("xj-review");
+  if (!box) return;
+  var list = loadXjReview();
+  var html = '<h2 style="margin:var(--block-gap) 0 8px">推演回看</h2>';
+  if (!list.length) {
+    /* 空状态骨架卡：三个位 + 下一步引导（v0.6 规则） */
+    html += '<div class="degrade-card">' +
+      '<p class="dc-title">推演回看 · 还没有题</p>' +
+      '<p class="caption">推演问题摘要位 · 当时视角位 · 你的标记位——完成一次推演后，这三格就会被填上。</p>' +
+      '<p class="caption" style="margin-top:8px;color:var(--accent-gold)">下一步：去「时机」页推开玄机天窗，做一次轻推演；7 天后回来对照「你当时听了吗」。</p>' +
+      '</div>';
+  } else {
+    list.slice().reverse().forEach(function (it, ri) {
+      var i = list.length - 1 - ri;
+      var q = it.red ? "（红区问题 · 原始问法未被记录）" : (it.q ? "「" + escapeHtml(it.q) + "」" : "（轻推演 · 未提问）");
+      html += '<div class="card">' +
+        '<p class="fb-meta num">' + fmtTs(it.ts) + ' · ' + escapeHtml(it.name) + '</p>' +
+        '<p style="font-size:var(--fs-body);margin-top:4px">问：' + q + '</p>' +
+        '<p class="caption" style="margin-top:4px">当时的视角：' + escapeHtml(it.view) + '……</p>' +
+        '<div class="mark-row">' +
+          '<button class="' + (it.mark === "did" ? "sel" : "") + '" onclick="markXjReview(' + i + ',\'did\')">照做了</button>' +
+          '<button class="' + (it.mark === "not" ? "sel" : "") + '" onclick="markXjReview(' + i + ',\'not\')">没照做</button>' +
+          '<button class="' + (it.mark === "unsure" ? "sel" : "") + '" onclick="markXjReview(' + i + ',\'unsure\')">还说不清</button>' +
+        '</div>' +
+        '<p class="caption" style="margin-top:8px">标记只存这台设备 · 7 天后回来看看：你当时听了吗？</p>' +
+        '</div>';
+    });
+  }
+  box.innerHTML = html;
+}
+function markXjReview(i, mark) {
+  var list = loadXjReview();
+  if (!list[i]) return;
+  list[i].mark = (list[i].mark === mark) ? "" : mark; /* 再点一次取消 */
+  saveXjReview(list);
+  renderXjReview();
 }
 
 /* ---------- ⑦.6 投喂养成（本体养成模块 · 仅存本机） ---------- */
@@ -2095,12 +2259,14 @@ function buildFbTags() {
 function openFb() {
   document.getElementById("fb-page").textContent = pageLabel();
   document.getElementById("fb-edit").style.display = "block";
+  document.getElementById("fb-saved").style.display = "none";
   document.getElementById("fb-list").style.display = "none";
   document.getElementById("fb-export").style.display = "none";
   document.getElementById("fb-panel").classList.add("active");
 }
 function closeFb() {
   document.getElementById("fb-panel").classList.remove("active");
+  document.getElementById("fb-saved").style.display = "none";
   /* 清空本次选择 */
   fbSelTags = {};
   document.getElementById("fb-text").value = "";
@@ -2121,7 +2287,13 @@ function saveFb() {
     mirrorLit: state.mirrorLit
   });
   saveFbList(list);
-  closeFb();
+  /* v0.6.1 · 写完当场可发：成功视图直接给「发送给开发团队」 */
+  var tip = document.getElementById("fb-saved-tip");
+  if (tip) tip.style.display = "none";
+  document.getElementById("fb-edit").style.display = "none";
+  document.getElementById("fb-saved").style.display = "block";
+  document.getElementById("fb-list").style.display = "none";
+  document.getElementById("fb-export").style.display = "none";
 }
 function openFbList() {
   var list = loadFb();
@@ -2144,6 +2316,7 @@ function openFbList() {
     box.appendChild(div);
   });
   document.getElementById("fb-edit").style.display = "none";
+  document.getElementById("fb-saved").style.display = "none";
   document.getElementById("fb-list").style.display = "block";
   document.getElementById("fb-export").style.display = "none";
   document.getElementById("fb-panel").classList.add("active");
@@ -2164,7 +2337,7 @@ function buildExportTxt() {
   var list = loadFb();
   var lines = [
     "AETHEL 棱镜 · 体验沙箱反馈导出",
-    "版本：SPEC-S1-sandbox v0.6.0（体验版）",
+    "版本：SPEC-S1-sandbox v0.6.1（体验版）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
     "「分身有多像你」终点：" + simTotal() + "%（已声明/已验证/已纠偏） · 数据就绪度：" + (state.dataReady || 0) + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
@@ -2205,20 +2378,22 @@ function sendFbFallback(txt) {
       encodeURIComponent("棱镜沙箱体验反馈 · " + (state.nickname || "访客")) +
       "&body=" + encodeURIComponent(body);
   } catch (e) {}
-  /* 降级 2：同时一键复制兜底，确保最多两步 */
+  /* 降级 2：同时一键复制兜底，确保最多两步（清单页与成功视图都给出提示） */
   copyText(txt, function (ok) {
-    var tip = document.getElementById("fb-list-tip");
-    if (!tip) return;
-    tip.style.display = "block";
-    tip.textContent = ok
+    var msg = ok
       ? "✓ 已复制，粘贴给华雨恒即可（若刚弹出了邮件 App，也可直接发送）"
       : "若弹出了邮件 App 可直接发送；也可以点下面「其他导出方式」手动复制";
+    ["fb-list-tip", "fb-saved-tip"].forEach(function (id) {
+      var tip = document.getElementById(id);
+      if (tip) { tip.textContent = msg; tip.style.display = "block"; }
+    });
   });
 }
 function exportFb() {
   var txt = buildExportTxt();
   document.getElementById("export-text").value = txt;
   document.getElementById("fb-edit").style.display = "none";
+  document.getElementById("fb-saved").style.display = "none";
   document.getElementById("fb-list").style.display = "none";
   document.getElementById("fb-export").style.display = "block";
   document.getElementById("fb-panel").classList.add("active");
@@ -2271,7 +2446,7 @@ function mailExport() {
 function backFromSettings() { go(settingsFrom); }
 function resetJourney() {
   if (!window.confirm("重置旅程将清除昵称、相似度、养成进度、镜灵状态与玄机推演账本（反馈记录保留）。确定吗？")) return;
-  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); localStorage.removeItem(LS_GUIDE); localStorage.removeItem(LS_GROW); } catch (e) {}
+  try { localStorage.removeItem(LS_STATE); localStorage.removeItem(LS_XJ); localStorage.removeItem(LS_GUIDE); localStorage.removeItem(LS_GROW); localStorage.removeItem(LS_XJ_RE); } catch (e) {}
   state = { nickname: "", authorized: false, dataReady: 0, scored: false, scoreCount: 0,
             mirrorLit: false, adviceLevel: "observe", degraded: false, reportSeen: false,
             focus: "", capNoteSeen: false, step: "s-welcome" };
