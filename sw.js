@@ -2,7 +2,7 @@
  * cache-first：优先命中缓存，未命中走网络并回填；CACHE 版本号变化即整体换新。
  * 相对路径，兼容 GitHub Pages 子路径（如 /prism-sandbox/）。
  */
-var CACHE = "prism-sandbox-v071";
+var CACHE = "prism-sandbox-v072";
 var ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {

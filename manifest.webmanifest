@@ -2,7 +2,7 @@
   "name": "AETHEL 棱镜 · 体验沙箱",
   "short_name": "棱镜沙箱",
   "description": "数字分身本体 + 玄机天窗 · 体验沙箱（全部演示数据，不出本机）",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
