@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.7.2</title>
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.0</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#C9A227">
 <!--
-  AETHEL 棱镜 · 体验沙箱 v0.7.2「焚毁仪式 · 真机热修」补丁
+  AETHEL 棱镜 · 体验沙箱 v0.8.0「红线 WASM 真引擎」补丁
   单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开（PWA 的 manifest/sw 为必需例外）
+  v0.8.0：T-WASM-01 阶段一——红线 WASM 真逻辑进沙箱：redlineCheck 统一入口（WASM 优先，
+          4s 超时/加载失败/运行期异常自动降级简化词表并如实标注「本地引擎未就绪」）；
+          位码语义 0 直通 / 101 黄区页脚 / 203 兜底拦截 / 204 危机安全回应 / 205 专业转介；
+          反馈输入过引擎（危机词 → 安全回应不拒收）；sw 预缓存 prism_wasm.wasm
   v0.7.2：真机热修——触屏按住被 pointercancel/pointerleave 抖动误取消（永远点不燃）改为
           仅抬手或滑走 >24px 才放弃 + touch 事件回退 + 长按防菜单；掉帧降级误伤（首 200ms 一刀切）
           改为 400ms 热身后持续 20 帧 >45ms 才降级；粒子密度随 dpr 缩放
@@ -656,7 +660,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption">不会读取你的任何真实信息；你喂的、你写的，都只存在这台设备的浏览器里。</p>
     </div>
     <button class="btn-primary" onclick="go('s-register')">开始养成我的分身</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（本地昵称，可跳过） ================= -->
@@ -669,7 +673,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" onclick="doRegister()">进入棱镜</button>
       <button class="btn-ghost" onclick="doGuest()">跳过，先随便逛逛</button>
       <p class="caption" style="margin-top:4px">昵称只存在这台设备的浏览器里；跳过即为访客，你输入的内容不会被保存。</p>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -685,7 +689,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('calm')">🌿 心里少点紧绷</button>
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('relate')">🤝 重要关系更顺</button>
       <button class="btn-ghost" onclick="pickFocus('')">都说不上来，随便看看</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -701,7 +705,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
       <p class="caption" style="margin-bottom:var(--block-gap)">未开放的维度会诚实显示 0%——它没有假装已经很懂你。</p>
       <button class="btn-primary" onclick="go('s-auth')">继续</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -726,7 +730,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
     <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
     <p class="caption" style="margin-top:8px">授权只提升「数据就绪度」——分身有多像你，要靠你亲手喂出来。</p>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 4 · 基线报告生成（<3s 加载过场） ================= -->
@@ -736,7 +740,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:8px">真实规格要求 3 秒内完成</p>
       <div class="loading-bar"><div class="loading-fill" id="load-fill"></div></div>
       <div class="skel"></div><div class="skel"></div><div class="skel"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -770,7 +774,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
     </div>
     <button class="btn-primary" onclick="go('s-dual')">查看首次对照解读</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
@@ -804,7 +808,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:4px">你的体感打分已经进入校准维度。</p>
     </div>
     <button class="btn-primary" onclick="startRitual()">完成解读，点亮镜灵</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 7 · 五 Tab 主界面 ================= -->
@@ -862,7 +866,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p class="caption" style="margin-top:8px">想恢复正常演示？到设置里关掉「演示：证据不足时的样子」即可。</p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 时机 -->
@@ -904,7 +908,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <span class="pill pill-fate">单源证据</span>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 复盘（Weekly Mirror + 应验成绩单） -->
@@ -940,7 +944,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div id="xj-review"></div>
       <!-- v0.6.3 · 决策账本雏形：当时证据 → 我的选择 → 7 天后结果 -->
       <div id="dec-ledger"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 分身 -->
@@ -969,7 +973,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div class="card">
         <p class="caption">「分身有多像你」由三部分长成：<strong style="color:var(--text-primary)">已声明</strong>（你主动喂的信息）、<strong style="color:var(--text-primary)">已验证</strong>（模仿测试里你判「像我」的）、<strong style="color:var(--text-primary)">已纠偏</strong>（你纠正过它的）。决策、传承两部分还没开放，会诚实显示 0%——因为我们还没有你足够的数据。</p>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 养成（本体养成：方向 → 投喂关卡 → 相似度 → 模仿测试 → 焚毁回显） -->
@@ -1036,7 +1040,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p id="grow-burn-ok" style="display:none;color:var(--semantic-normal);margin-top:8px;font-size:var(--fs-subtitle)"></p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -1082,7 +1086,9 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
       <p class="caption">这是 AETHEL 棱镜的体验沙箱，「数字分身本体 + 玄机天窗」的体验版：本体是投喂养成（选方向、喂数据、看相似度、考模仿），玄机模式只是界面里的一扇天窗。全部内容为演示数据，不读取任何真实信息，你喂的、你写的都只存在这台设备的浏览器里。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.7.2（体验版）</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.0（体验版）</p>
+      <p class="caption" style="margin-top:4px" id="redline-status">红线引擎：载入中…</p>
+      <p class="caption" style="margin-top:4px">v0.8.0 更新：红线检查换上 WASM 真引擎——「自由问一件」和反馈输入的红线判定改由 prism 主仓同一份 Rust 红线管线执行（编译成本地 WASM 文件，71 条攻击回归武装，全程本地、不出这台设备），前端硬编码词表退役、只留作兜底；引擎没载入或运行异常时自动降级，拦截卡与安全回应上如实标注「本地引擎未就绪，已用简化规则」；位码语义落地——绿直通 / 黄区（如替他人做决定类）放行并在结果页页脚展示引擎提示 / 兜底拦截与专业转介（合同、投资类）展示引擎回应原文 / 危机词走安全回应卡；反馈里的危机词触发安全回应但不拒收；上方新增「红线引擎」状态行，离线缓存同步预载引擎文件。</p>
       <p class="caption" style="margin-top:4px">v0.7.2 更新（热修）：真机上焚毁仪式按住就被指尖抖动取消、永远点不燃——现在只有真正抬手或明显滑走（&gt;24px）才算放弃，触屏抖动不再误伤，并补了无 PointerEvent 老浏览器的 touch 回退与长按防菜单；「动画没感受到」修复——掉帧降级从「首 200ms 平均 &gt;32ms 一刀切」改为「400ms 热身期后持续 20 帧 &gt;45ms 才降级」，粒子密度随 dpr 缩放（dpr3 手机粒子量减到约 1/3），正常手机能看到完整的像素燃尽动画。</p>
       <p class="caption" style="margin-top:4px">v0.7.1 更新：「重置旅程」升级为焚毁仪式（L2 时刻首个试点）——不再是弹窗确认，而是按住 800ms 看着「数据纸」像素级燃尽、余烬熄灭、静默 300ms 后打印焚毁回执：回执每一行对应一次真实的存储删除（删一行打一行，删后核验，失败会如实标红），结算行如实报告本机残留键数；系统开「减弱动态效果」或低端机自动降级为静态帧，回执末尾诚实标注「已用简化动效」；烧完点「回到第一天」重载回首次访问态。真闭环承诺不变：7 个存储键（含历史遗留的引导键）一个不留。</p>
       <p class="caption" style="margin-top:4px">v0.7.0 更新：首屏只剩一张主卡一个行动（「记下这个判断」当场打分，其余内容折叠进「展开」）；双引导卡合一（原「第一次来」并入五步体验路线）；顶部新增信任状态条（本地运行中 · 未上传 · 证据状态，证据不足时如实切换）；空状态统一三件套（为什么是空的 / 补哪一项它会变 / 补完你能看见什么）；字阶与按钮三级规范（正文 16px、主按钮 48px 高、焦点有金环）；相似度与成长条改三段式语义色（声明灰 · 验证青 · 纠偏紫）；今日页新增复盘到期卡（有未标记的回看题时优先出现）；toast 挪到顶部避让底部操作、4 秒自动消失；设置页 7 个键名折叠进「技术核对」；全站动效 400ms 封顶，系统开「减弱动态效果」时全部关停。</p>
@@ -1107,7 +1113,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
     <button class="btn-danger" onclick="resetJourney()">⚠ 重置旅程（清除昵称、养成、分身、推演账本与你写的全部反馈）</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9 · 玄机模式门厅（独立天窗） ================= -->
@@ -1149,7 +1155,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 
     <p class="caption" style="margin:var(--block-gap) 0 12px">次数上限是产品价值观，不出售。这里没有任何「付费加算」入口。</p>
     <button class="btn-ghost" onclick="exitXj()">离开玄机模式</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9.5 · 认真三问（中/重推演的前置门槛） ================= -->
@@ -1165,7 +1171,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <div class="card">
       <p style="margin-bottom:8px">① 你要问的是什么事？（越具体越好）</p>
       <input class="text-input" id="xj-q1" maxlength="60" placeholder="例：下周和重要客户的签约" autocomplete="off">
-      <p class="xj-red-note">演示态过滤，正式版由引擎级规则执行——命中红区的问题会被拒答，不扣次数，原始问法不落盘。</p>
+      <p class="xj-red-note">红线由本地 WASM 引擎执行（未载入时降级为简化规则，结果页会如实标注）——命中红区的问题会被拒答，不扣次数，原始问法不落盘。</p>
       <p style="margin-bottom:8px">② 为什么是现在问？</p>
       <input class="text-input" id="xj-q2" maxlength="60" placeholder="例：对方这周催我定时间" autocomplete="off">
       <p style="margin-bottom:8px">③ 拿到参考视角后，你打算怎么对待它？</p>
@@ -1210,7 +1216,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <p style="margin:var(--block-gap) 0 12px"><span class="xj-burn">◌ 本次记录阅后即焚 · 结果仅你可见，请勿截屏分享</span></p>
     <p class="caption" style="margin-bottom:12px;color:var(--track-fate)">7 天后回来看看：你当时听了吗？复盘页「推演回看」会留着这题，只存在这台设备上。</p>
     <button class="btn-primary" id="xj-finish-btn" onclick="finishXj()">收下这个视角，离开</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.7.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
 </div><!-- /#phone -->
@@ -1262,6 +1268,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <div id="fb-saved" style="display:none">
       <h2 style="margin-bottom:4px">已记下 ✓</h2>
       <p class="caption" style="margin-bottom:12px">这条感受只存在这台设备上。现在就可以发给开发团队，也可以稍后在清单里一起发。</p>
+      <p class="caption" id="fb-safety" style="display:none;margin-bottom:12px;white-space:pre-line"></p>
       <button class="btn-primary" onclick="sendFeedback()">发送给开发团队</button>
       <p class="export-tip" id="fb-saved-tip" style="display:none"></p>
       <button class="btn-ghost" onclick="openFbList()">去反馈清单看看</button>
@@ -1318,7 +1325,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 <script>
 "use strict";
 /* ============================================================
- * AETHEL 棱镜 · S1 体验沙箱 v0.7.2
+ * AETHEL 棱镜 · S1 体验沙箱 v0.8.0
  * 分区：①状态与持久化 ②导航 ③引导旅程 ④相似度组件（三分拆）
  *       ⑤打分与回偿 ⑥仪式与主界面 ⑦降级演示 ⑦.5玄机 ⑦.6养成 ⑧反馈面板
  * ============================================================ */
@@ -2152,6 +2159,7 @@ function openXjAsk(key) {
   document.getElementById("xj-q2").value = "";
   document.getElementById("xj-q3").value = "";
   document.getElementById("xj-ask-warn").style.display = "none";
+  xjYellowNote = null; /* v0.8.0 · 开新一问前清掉上一问的黄区提示 */
   go("s-xj-ask");
 }
 function submitXjAsk() {
@@ -2162,14 +2170,20 @@ function submitXjAsk() {
     document.getElementById("xj-ask-warn").style.display = "block";
     return;
   }
-  /* v0.6.2 · 自由问一件：演示级红区过滤（命中即拒答，不扣次、不落盘原文） */
+  /* v0.8.0 · 自由问一件：红线判定统一走 redlineCheck（WASM 真引擎优先，未就绪自动降级简化词表并如实标注） */
   if (xjAskKey === "free") {
-    /* v0.6.3 · 情绪安全层优先于普通红区：危机词 → 安全回应卡 */
-    if (xjCrisisCheck(q1)) { runXjCrisis(); return; }
+    var rc = redlineCheck(q1);
+    if (rc.code === 204) { runXjCrisis(rc); return; }                    /* 危机安全回应：不扣次、不落盘原文 */
+    if (rc.code === 203 || rc.code === 205) { runXjRefusal(rc); return; } /* 兜底拦截 / 专业转介 */
+    xjYellowNote = (rc.code === 101) ? rc : null;                        /* 黄区：放行，结果页页脚展示引擎提示 */
     var l0 = xjLedger();
-    var hit = xjRedCheck(q1, l0);
-    if (hit) { runXjRefusal(hit); return; }
-    l0.qhash[qHash(q1.replace(/\s+/g, ""))] = Date.now(); /* 只存散列值，原文永不落盘 */
+    var qh = qHash(q1.replace(/\s+/g, ""));
+    /* 天天追问同一件：频率规则（非词表），WASM 与降级双路径都生效 */
+    if (l0.qhash && l0.qhash[qh] && (Date.now() - l0.qhash[qh] < 24 * 3600 * 1000)) {
+      runXjRefusal({ code: 203, text: XJ_RED_RULES[3].reply, cat: XJ_RED_RULES[3].cat, engine: "fallback", repeat: true });
+      return;
+    }
+    l0.qhash[qh] = Date.now(); /* 只存散列值，原文永不落盘 */
     xjSave(l0);
   }
   xjAskQ = q1;
@@ -2214,6 +2228,13 @@ function runCast(key) {
   /* v0.6.2 · 中推演硬输出：结果卡尾部追加具体建议+置信度+依据（与治理提醒共存） */
   var bodyHtml = '<p style="font-size:var(--fs-body)">' + XJ_RESULTS[key] + '</p>';
   if (t.tier === "mid" && !t.red) bodyHtml += xjHardHTML(key);
+  /* v0.8.0 · 黄区页脚：引擎判定 101 → 放行，结果页页脚展示引擎提示原文并标注引擎来源 */
+  if (xjYellowNote) {
+    bodyHtml += '<p class="caption" style="margin-top:12px;color:var(--track-fate)">' +
+      escapeHtml(xjYellowNote.text).replace(/\n/g, "<br>") + ' —— 红线引擎黄区提示（位码 101 · ' +
+      (xjYellowNote.engine === "wasm" ? "WASM 真逻辑" : "简化规则" + RL_FALLBACK_NOTE) + "）</p>";
+    xjYellowNote = null;
+  }
   document.getElementById("xj-res-body").innerHTML = bodyHtml;
   document.getElementById("xj-res-rewrite").style.display = t.red ? "block" : "none";
   if (t.red) document.getElementById("xj-rewrite-cat").textContent = "红区问题 · 命中「赌博与发财」 · 只给状态，不给答案";
@@ -2714,7 +2735,8 @@ function toggleXjRules() {
   w.style.display = open ? "none" : "block";
   b.textContent = open ? "为什么有这个房间？▾ 展开规则" : "收起规则 ▴";
 }
-/* ---------- ⑦.8 v0.6.2 · 自由问一件：演示级红区过滤（词库宁可误拦不可漏放） ---------- */
+/* ---------- ⑦.8 v0.6.2 · 自由问一件：演示级红区过滤（词库宁可误拦不可漏放） ----------
+   v0.8.0 起：判定统一走 ⑦.8.5 redlineCheck（WASM 优先）；本区词表退役为降级兜底（redlineFallback 直接读取）。 */
 var XJ_RED_RULES = [
   { cat: "健康诊断与寿命灾祸", reply: "关于健康与寿命的问题，棱镜永远不答——不是不敢，是不能：这类答案只会喂养焦虑。如果身体有担忧，最靠谱的一步是约一次正规体检，医生比任何推演都配回答这个问题。",
     words: ["活多久", "还能活", "寿命", "会死", "病死", "死期", "癌症", "肿瘤", "诊断", "病情", "灾祸", "血光", "大难", "意外", "车祸", "绝症", "自杀"] },
@@ -2731,7 +2753,8 @@ function qHash(s) {
   for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
   return "q" + h.toString(36);
 }
-/* 返回 {cat, reply} 或 null；命中即拒答 */
+/* 返回 {cat, reply} 或 null；命中即拒答。
+   v0.8.0 起无调用方（退役）：内容词表由 redlineFallback 直接读取，频率规则内联在 submitXjAsk。保留备回滚。 */
 function xjRedCheck(q, ledger) {
   var norm = q.replace(/\s+/g, "");
   if (!norm) return null;
@@ -2748,24 +2771,37 @@ function xjRedCheck(q, ledger) {
   }
   return null;
 }
-/* 红区拒答卡：不扣次数、不落盘原始问法、给人文回应 */
+/* 红区拒答卡：不扣次数、不落盘原始问法、给人文回应。
+   v0.8.0：hit 改为 redlineCheck 位码结果 {code, text, cat, engine, repeat}——WASM 路径展示引擎回应原文
+   并标注位码；降级路径沿用本地文案，如实标注「本地引擎未就绪，已用简化规则」。 */
 function runXjRefusal(hit) {
   xjCurrent = "free";
   xjCostPaid = true; /* 拒答无代价 */
+  var hitCat = hit.cat || (hit.code === 205 ? "专业转介" : "引擎拦截");
   xjLastCast = {
     name: "自由问一件 · 拒答",
     red: true,
     q: "",
-    view: "红区拒答（" + hit.cat + "）：未扣次数，原始问法未记录。"
+    view: "红区拒答（" + hitCat + "）：未扣次数，原始问法未记录。"
   };
   document.getElementById("xj-res-title").textContent = "这次，棱镜不回答";
   document.getElementById("xj-res-tier").textContent = "中推演 · 自由问一件 · 红区拒答（未消耗次数）";
   document.getElementById("xj-res-q").style.display = "none";
+  var engineNote;
+  if (hit.repeat) {
+    engineNote = "命中类别：" + hitCat + " · 本地频率规则（24 小时内同一问法散列比对，原文不落盘）。";
+  } else if (hit.engine === "wasm") {
+    engineNote = "红线引擎判定：" + (hit.code === 205 ? "专业转介（位码 205）" : "兜底拦截（位码 203）") +
+      " · WASM 真逻辑（prism-redline），以上回应为引擎原文。";
+  } else {
+    engineNote = "命中类别：" + hitCat + " · 演示态过滤，正式版由引擎级规则执行" + RL_FALLBACK_NOTE +
+      "。误拦了正常问题？这恰是演示想让你看见的克制。";
+  }
   document.getElementById("xj-res-body").innerHTML =
-    '<p style="font-size:var(--fs-body)">' + hit.reply + '</p>' +
-    '<p class="caption" style="margin-top:12px;color:var(--track-fate)">命中类别：' + hit.cat + ' · 演示态过滤，正式版由引擎级规则执行。误拦了正常问题？这恰是演示想让你看见的克制。</p>';
+    '<p style="font-size:var(--fs-body)">' + escapeHtml(hit.text).replace(/\n/g, "<br>") + '</p>' +
+    '<p class="caption" style="margin-top:12px;color:var(--track-fate)">' + engineNote + '</p>';
   document.getElementById("xj-res-rewrite").style.display = "block";
-  document.getElementById("xj-rewrite-cat").textContent = "红区问题 · 命中「" + hit.cat + "」 · 只给状态，不给答案";
+  document.getElementById("xj-rewrite-cat").textContent = "红区问题 · 命中「" + hitCat + "」 · 只给状态，不给答案";
   document.getElementById("xj-cost").style.display = "none";
   var finish = document.getElementById("xj-finish-btn");
   finish.disabled = false; finish.style.opacity = "1";
@@ -2783,6 +2819,86 @@ function xjSkipCost() {
   var skipBtn = document.getElementById("xj-skip-btn");
   if (skipBtn) skipBtn.style.display = "none";
   xjMarkCostPaid();
+}
+
+/* ---------- ⑦.8.5 v0.8.0 · T-WASM-01：红线 WASM 真引擎进沙箱（前端硬编码词表退役为降级兜底） ----------
+   位码语义 = level×100+kind：0 绿直通 · 101 黄区页脚（放行+结果页页脚展示引擎提示） · 203 兜底拦截 ·
+   204 危机安全回应 · 205 专业转介。引擎文件 prism_wasm.wasm 来自 prism 主仓 core/prism-wasm
+   （与 CI 六关卡同一份 Rust 红线管线，71 条攻击回归武装）；加载失败 / 超时 / 运行期异常 →
+   自动降级为本地简化词表，界面如实标注「本地引擎未就绪，已用简化规则」。 */
+var redlineEngine = { ready: false, wasm: null, err: "" };
+var RL_FALLBACK_NOTE = "（本地引擎未就绪，已用简化规则）";
+var RL_ENC = (typeof TextEncoder !== "undefined") ? new TextEncoder() : null;
+var RL_DEC = (typeof TextDecoder !== "undefined") ? new TextDecoder() : null;
+var xjYellowNote = null; /* 黄区（101）放行时待展示的引擎提示 */
+function paintRedlineStatus(txt) {
+  var el = document.getElementById("redline-status");
+  if (el) el.textContent = txt;
+}
+function bootRedline() {
+  if (!window.WebAssembly || !RL_ENC || typeof fetch === "undefined") {
+    paintRedlineStatus("红线引擎：简化规则（此浏览器不支持 WASM）");
+    return;
+  }
+  var ctrl = ("AbortController" in window) ? new AbortController() : null;
+  var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 4000); /* 4s 载不入就降级，不挡首屏 */
+  fetch("prism_wasm.wasm", ctrl ? { signal: ctrl.signal } : {})
+    .then(function (res) {
+      if (!res.ok) throw new Error("http " + res.status);
+      return res.arrayBuffer();
+    })
+    .then(function (bytes) { return WebAssembly.instantiate(bytes, {}); })
+    .then(function (mod) {
+      clearTimeout(timer);
+      redlineEngine.wasm = mod.instance.exports;
+      redlineEngine.ready = true;
+      paintRedlineStatus("红线引擎：WASM 真逻辑已载入（prism-redline · 71 条攻击回归武装）");
+    })
+    .catch(function (e) {
+      clearTimeout(timer);
+      redlineEngine.ready = false;
+      redlineEngine.err = String(e);
+      paintRedlineStatus("红线引擎：简化规则（WASM 未载入）");
+    });
+}
+/* 统一红线入口：返回 {code, text, cat, engine}；engine = "wasm" | "fallback"。同步返回（WASM check 本身同步）。 */
+function redlineCheck(q) {
+  if (redlineEngine.ready) {
+    try {
+      var bytes = RL_ENC.encode(q);
+      var w = redlineEngine.wasm;
+      var ptr = w.prism_alloc(bytes.length);
+      new Uint8Array(w.memory.buffer, ptr, bytes.length).set(bytes);
+      var code = w.prism_redline_check(ptr, bytes.length);
+      w.prism_dealloc(ptr, bytes.length);
+      var optr = w.prism_redline_out_ptr();
+      var olen = w.prism_redline_out_len();
+      var text = RL_DEC.decode(new Uint8Array(w.memory.buffer, optr, olen));
+      return { code: code, text: text, cat: "", engine: "wasm" };
+    } catch (e) {
+      /* 运行期异常：当场降级，后续调用走简化词表，设置页状态行如实切换 */
+      redlineEngine.ready = false;
+      redlineEngine.err = String(e);
+      paintRedlineStatus("红线引擎：简化规则（WASM 运行期异常，已降级）");
+    }
+  }
+  return redlineFallback(q);
+}
+/* 降级路径：本地简化词表（原演示态过滤逻辑，仅作兜底）。危机词→204，红区三类内容词表→203，无命中→0。
+   第四类「天天追问同一件」是频率规则不是词表，留在调用点由 qhash 执行（WASM 与降级双路径都生效）。 */
+function redlineFallback(q) {
+  var norm = q.replace(/\s+/g, "");
+  if (!norm) return { code: 0, text: "", cat: "", engine: "fallback" };
+  if (xjCrisisCheck(q)) return { code: 204, text: "", cat: "情绪安全", engine: "fallback" };
+  for (var i = 0; i < 3; i++) {
+    var r = XJ_RED_RULES[i];
+    for (var j = 0; j < r.words.length; j++) {
+      if (r.words[j] && norm.indexOf(r.words[j]) !== -1) {
+        return { code: 203, text: r.reply, cat: r.cat, engine: "fallback" };
+      }
+    }
+  }
+  return { code: 0, text: "", cat: "", engine: "fallback" };
 }
 
 /* ---------- ⑦.9 v0.6.3 · 五步路线 / 决策账本 / 情绪安全 / 撤回 / 维度管理 / PWA ---------- */
@@ -2884,7 +3000,9 @@ function xjCrisisCheck(q) {
   for (var i = 0; i < XJ_CRISIS.length; i++) if (norm.indexOf(XJ_CRISIS[i]) !== -1) return true;
   return false;
 }
-function runXjCrisis() {
+/* v0.8.0：rc 为 redlineCheck 位码结果——WASM 路径展示引擎安全回应原文（位码 204）；
+   降级路径沿用本地安全文案，如实标注「本地引擎未就绪，已用简化规则」。 */
+function runXjCrisis(rc) {
   xjCurrent = "free";
   xjCostPaid = true; /* 安全回应无代价、不扣次数、原文不落盘 */
   xjLastCast = { name: "自由问一件 · 安全回应", red: true, q: "",
@@ -2892,12 +3010,21 @@ function runXjCrisis() {
   document.getElementById("xj-res-title").textContent = "先照顾好你";
   document.getElementById("xj-res-tier").textContent = "中推演 · 自由问一件 · 安全回应（未消耗次数）";
   document.getElementById("xj-res-q").style.display = "none";
-  document.getElementById("xj-res-body").innerHTML =
-    '<div class="card xj-safe" style="margin:0">' +
-    '<p class="serif" style="font-size:var(--fs-subtitle)">我在。你现在安全吗？要不要先离开这个对话，打个电话？</p>' +
-    '<p style="margin-top:12px;font-size:var(--fs-body)">这类事棱镜不推演，但你的安全比任何答案都重要。</p>' +
-    '<p class="caption" style="margin-top:12px">如果此刻很难受，请拨打当地心理援助热线，或马上联系一个你信任的人。</p>' +
-    '<p class="caption" style="margin-top:8px;color:var(--track-fate)">演示态过滤，正式版由引擎级规则执行。原始问法不会被记录。</p></div>';
+  var bodyHtml;
+  if (rc && rc.engine === "wasm" && rc.text) {
+    bodyHtml =
+      '<div class="card xj-safe" style="margin:0">' +
+      '<p class="serif" style="font-size:var(--fs-subtitle)">' + escapeHtml(rc.text).replace(/\n/g, "<br>") + '</p>' +
+      '<p class="caption" style="margin-top:8px;color:var(--track-fate)">红线引擎判定：危机安全回应（位码 204）· WASM 真逻辑（prism-redline），以上回应为引擎原文。原始问法不会被记录。</p></div>';
+  } else {
+    bodyHtml =
+      '<div class="card xj-safe" style="margin:0">' +
+      '<p class="serif" style="font-size:var(--fs-subtitle)">我在。你现在安全吗？要不要先离开这个对话，打个电话？</p>' +
+      '<p style="margin-top:12px;font-size:var(--fs-body)">这类事棱镜不推演，但你的安全比任何答案都重要。</p>' +
+      '<p class="caption" style="margin-top:12px">如果此刻很难受，请拨打当地心理援助热线，或马上联系一个你信任的人。</p>' +
+      '<p class="caption" style="margin-top:8px;color:var(--track-fate)">演示态过滤，正式版由引擎级规则执行' + RL_FALLBACK_NOTE + '。原始问法不会被记录。</p></div>';
+  }
+  document.getElementById("xj-res-body").innerHTML = bodyHtml;
   document.getElementById("xj-res-rewrite").style.display = "none";
   document.getElementById("xj-cost").style.display = "none";
   var finish = document.getElementById("xj-finish-btn");
@@ -2969,7 +3096,7 @@ function paintSwBadge(txt) {
     return;
   }
   navigator.serviceWorker.register("sw.js").then(function () {
-    paintSwBadge("✓ 已可离线使用（缓存 v0.7.2 · 版本升级自动换新）");
+    paintSwBadge("✓ 已可离线使用（缓存 v0.8.0 · 版本升级自动换新）");
   }).catch(function () {
     paintSwBadge("离线注册未成功——不影响使用，部署环境允许时会自动激活。");
   });
@@ -2997,6 +3124,7 @@ function openFb() {
   document.getElementById("fb-page").textContent = pageLabel();
   document.getElementById("fb-edit").style.display = "block";
   document.getElementById("fb-saved").style.display = "none";
+  document.getElementById("fb-safety").style.display = "none"; /* v0.8.0 · 安全回应随视图切换收起 */
   document.getElementById("fb-list").style.display = "none";
   document.getElementById("fb-export").style.display = "none";
   document.getElementById("fb-panel").classList.add("active");
@@ -3004,6 +3132,7 @@ function openFb() {
 function closeFb() {
   document.getElementById("fb-panel").classList.remove("active");
   document.getElementById("fb-saved").style.display = "none";
+  document.getElementById("fb-safety").style.display = "none"; /* v0.8.0 */
   /* 清空本次选择 */
   fbSelTags = {};
   document.getElementById("fb-text").value = "";
@@ -3014,6 +3143,8 @@ function saveFb() {
   var tags = Object.keys(fbSelTags).filter(function (k) { return fbSelTags[k]; });
   var text = document.getElementById("fb-text").value.trim();
   if (!tags.length && !text) { closeFb(); return; }
+  /* v0.8.0 · 反馈文本也过一遍红线引擎：命中危机词 → 安全回应（不拒收，感受照常记下，原文仍只存本机） */
+  var rc = text ? redlineCheck(text) : null;
   var list = loadFb();
   list.push({
     ts: new Date().toISOString(),
@@ -3031,6 +3162,16 @@ function saveFb() {
   document.getElementById("fb-saved").style.display = "block";
   document.getElementById("fb-list").style.display = "none";
   document.getElementById("fb-export").style.display = "none";
+  /* 危机词安全回应：感受已记下，同时把安全话放到成功视图（引擎原文优先，降级用本地文案） */
+  var safety = document.getElementById("fb-safety");
+  if (rc && rc.code === 204) {
+    safety.textContent = (rc.engine === "wasm" && rc.text)
+      ? rc.text + "（红线引擎 · 位码 204 危机安全回应 · WASM 真逻辑）"
+      : "我在。你现在安全吗？如果此刻很难受，请拨打当地心理援助热线，或马上联系一个你信任的人。（红线引擎 · 位码 204 危机安全回应" + RL_FALLBACK_NOTE + "）";
+    safety.style.display = "block";
+  } else {
+    safety.style.display = "none";
+  }
 }
 function openFbList() {
   var list = loadFb();
@@ -3077,7 +3218,7 @@ function buildExportTxt() {
   var list = loadFb();
   var lines = [
     "AETHEL 棱镜 · 体验沙箱反馈导出",
-    "版本：SPEC-S1-sandbox v0.7.2（体验版）",
+    "版本：SPEC-S1-sandbox v0.8.0（体验版）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
     "「分身有多像你」终点：" + simTotal() + "%（已声明/已验证/已纠偏） · 数据就绪度：" + (state.dataReady || 0) + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
@@ -3561,6 +3702,7 @@ if (state.step === "s-main" || state.mirrorLit) {
 /* 报告页与主界面的相似度条挂载 */
 if (document.getElementById("report-sync-slot")) mountSyncBar("report-sync-slot");
 paintMirrors();
+bootRedline(); /* v0.8.0 · 红线 WASM 引擎后台异步载入（4s 超时降级），不挡首屏 */
 </script>
 </body>
 </html>
