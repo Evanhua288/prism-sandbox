@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.2</title>
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.3</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#C9A227">
 <!--
-  AETHEL 棱镜 · 体验沙箱 v0.8.2「诚意修复」补丁
+  AETHEL 棱镜 · 体验沙箱 v0.8.3「委婉求助」补丁
   单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开（PWA 的 manifest/sw 为必需例外）
+  v0.8.3：红线批次二（委婉求助层）进沙箱——prism 主仓 6099881：RL-CRISIS-EUPH 19 词条 +
+          soft 文案 B 生效，攻击回归 71→103；「想睡过去不再醒来」「撑得好累」这类委婉表达
+          现在被引擎接住（位码 204 · 关怀回应），ABI 不变、wasm 76,288→79,468 B
   v0.8.2：诚意修复（v2 线第二份报告 §七 U1/U2）——第〇关真实投喂：真打一句过红线引擎，
           通过即提取抽象句式特征生成学习卡、原文当场即焚不落盘；诚实分层：五关模拟统一
           标注「演示成长」，与真实投喂分开记账；焚毁入口上移（信任证明卡）+ 两步确认版常备
@@ -666,7 +669,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption">不会读取你的任何真实信息；你喂的、你写的，都只存在这台设备的浏览器里。</p>
     </div>
     <button class="btn-primary" onclick="go('s-register')">开始养成我的分身</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（本地昵称，可跳过） ================= -->
@@ -679,7 +682,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" onclick="doRegister()">进入棱镜</button>
       <button class="btn-ghost" onclick="doGuest()">跳过，先随便逛逛</button>
       <p class="caption" style="margin-top:4px">昵称只存在这台设备的浏览器里；跳过即为访客，你输入的内容不会被保存。</p>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -695,7 +698,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('calm')">🌿 心里少点紧绷</button>
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('relate')">🤝 重要关系更顺</button>
       <button class="btn-ghost" onclick="pickFocus('')">都说不上来，随便看看</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -711,7 +714,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
       <p class="caption" style="margin-bottom:var(--block-gap)">未开放的维度会诚实显示 0%——它没有假装已经很懂你。</p>
       <button class="btn-primary" onclick="go('s-auth')">继续</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -736,7 +739,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
     <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
     <p class="caption" style="margin-top:8px">授权只提升「数据就绪度」——分身有多像你，要靠你亲手喂出来。</p>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 4 · 基线报告生成（<3s 加载过场） ================= -->
@@ -746,7 +749,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:8px">真实规格要求 3 秒内完成</p>
       <div class="loading-bar"><div class="loading-fill" id="load-fill"></div></div>
       <div class="skel"></div><div class="skel"></div><div class="skel"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -780,7 +783,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
     </div>
     <button class="btn-primary" onclick="go('s-dual')">查看首次对照解读</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
@@ -814,7 +817,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:4px">你的体感打分已经进入校准维度。</p>
     </div>
     <button class="btn-primary" onclick="startRitual()">完成解读，点亮镜灵</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 7 · 五 Tab 主界面 ================= -->
@@ -872,7 +875,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p class="caption" style="margin-top:8px">想恢复正常演示？到设置里关掉「演示：证据不足时的样子」即可。</p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 时机 -->
@@ -914,7 +917,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <span class="pill pill-fate">单源证据</span>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 复盘（Weekly Mirror + 应验成绩单） -->
@@ -950,7 +953,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div id="xj-review"></div>
       <!-- v0.6.3 · 决策账本雏形：当时证据 → 我的选择 → 7 天后结果 -->
       <div id="dec-ledger"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 分身 -->
@@ -979,7 +982,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div class="card">
         <p class="caption">「分身有多像你」由三部分长成：<strong style="color:var(--text-primary)">已声明</strong>（你主动喂的信息）、<strong style="color:var(--text-primary)">已验证</strong>（模仿测试里你判「像我」的）、<strong style="color:var(--text-primary)">已纠偏</strong>（你纠正过它的）。决策、传承两部分还没开放，会诚实显示 0%——因为我们还没有你足够的数据。已声明里再分两层：<strong style="color:var(--text-primary)">真实投喂</strong>（第〇关，你亲手打的一句话）与<strong style="color:var(--text-primary)">演示成长</strong>（五关模拟），分开记账、随时可查。</p>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 养成（本体养成：方向 → 投喂关卡 → 相似度 → 模仿测试 → 焚毁回显） -->
@@ -1050,7 +1053,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p id="grow-burn-ok" style="display:none;color:var(--semantic-normal);margin-top:8px;font-size:var(--fs-subtitle)"></p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -1097,8 +1100,9 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
       <p class="caption">这是 AETHEL 棱镜的体验沙箱，「数字分身本体 + 玄机天窗」的体验版：本体是投喂养成（选方向、喂数据、看相似度、考模仿），玄机模式只是界面里的一扇天窗。全部内容为演示数据，不读取任何真实信息，你喂的、你写的都只存在这台设备的浏览器里。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.2（体验版）</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.3（体验版）</p>
       <p class="caption" style="margin-top:4px" id="redline-status">红线引擎：载入中…</p>
+      <p class="caption" style="margin-top:4px">v0.8.3 更新（红线批次二 · 委婉求助层进沙箱）：委婉求助层上线——「想睡过去不再醒来」「撑得好累」这类表达现在会被引擎接住（位码 204 · 关怀回应，不再是直通漏网）；词条与回应文案经《红线词库扩展评审 V1.1》签署生效，攻击回归从 71 条扩到 103 条（含 9 条误伤防护例：「昨晚睡过去了，闹钟没叫醒我」这类日常说法保持绿通）。致谢 v2 线互测发现——正是你们那句「不是接线缺失，是引擎对委婉表达的危机覆盖不足」推动了这一层。ABI 不变，引擎文件 76,288 → 79,468 字节，本地运行、不出这台设备。</p>
       <p class="caption" style="margin-top:4px">v0.8.2 更新（诚意修复 · 认领 v2 线报告 §七 U1/U2）：①投喂关卡新增第〇关——真打一句你说过的话喂它，先过红线 WASM 引擎（危机词给安全回应、红线话题提示换一句，都不凶你），通过后只提取一个抽象句式特征（句长/语气词/口头禅倾向，初步特征、前端启发式）生成学习卡，原文当场即焚、一个字符都不落盘——「用完即焚」第一次被你亲手经历；②诚实分层——五关模拟投喂长的分统一标注「演示成长」，与真实投喂分开记账，养成页和分身页都能看到这个分层；③焚毁入口上移——喂完任一关，关卡区下面出现「信任证明卡」，一键直达焚毁仪式；④两步确认版常备——焚毁仪式页新增「不方便长按？用两步确认版」，第一步看清要删的 7 个键、第二步最终确认，走同一套真删除与逐行回执（仪式感减、闭环不变，回执如实标注已用简化动效）。</p>
       <p class="caption" style="margin-top:4px">v0.8.1 更新（互测响应 · 逐条认领 v2 线实测报告）：①反馈通道说与做对齐——全站唯一反馈入口（右下角「记一笔感受」，各页同此入口）在危机词（位码 204 → 安全回应）之外，判决/转介类（位码 203/205）也会把引擎的话一并留给你；一律不拒收，感受照常记下、原文只存本机。如实说明：v2 的两句测试语（「想睡过去不再醒来」「撑得好累」）经 WASM 引擎实测位码为 0——不是接线缺失，是引擎对委婉表达的危机覆盖不足，已回传红线共建池建议扩词；②「数据在哪」表格补上第 7 行（引导键），上面说的 7 个键和表格 7 行对齐了；③五步路线「① 喂数据」直达投喂关卡——已选方向直接落到关卡区，未选方向时选完自动落到关卡（选方向+跳关二合一）；④焚毁闭环完成一次 K0→焚毁→K1 正式对账：7 键播种 → 完整仪式 → 0 残留 + 回执全文，证据包随本版归档。</p>
       <p class="caption" style="margin-top:4px">v0.8.0 更新：红线检查换上 WASM 真引擎——「自由问一件」和反馈输入的红线判定改由 prism 主仓同一份 Rust 红线管线执行（编译成本地 WASM 文件，71 条攻击回归武装，全程本地、不出这台设备），前端硬编码词表退役、只留作兜底；引擎没载入或运行异常时自动降级，拦截卡与安全回应上如实标注「本地引擎未就绪，已用简化规则」；位码语义落地——绿直通 / 黄区（如替他人做决定类）放行并在结果页页脚展示引擎提示 / 兜底拦截与专业转介（合同、投资类）展示引擎回应原文 / 危机词走安全回应卡；反馈里的危机词触发安全回应但不拒收；上方新增「红线引擎」状态行，离线缓存同步预载引擎文件。</p>
@@ -1126,7 +1130,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
     <button class="btn-danger" onclick="resetJourney()">⚠ 重置旅程（清除昵称、养成、分身、推演账本与你写的全部反馈）</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9 · 玄机模式门厅（独立天窗） ================= -->
@@ -1168,7 +1172,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 
     <p class="caption" style="margin:var(--block-gap) 0 12px">次数上限是产品价值观，不出售。这里没有任何「付费加算」入口。</p>
     <button class="btn-ghost" onclick="exitXj()">离开玄机模式</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9.5 · 认真三问（中/重推演的前置门槛） ================= -->
@@ -1229,7 +1233,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <p style="margin:var(--block-gap) 0 12px"><span class="xj-burn">◌ 本次记录阅后即焚 · 结果仅你可见，请勿截屏分享</span></p>
     <p class="caption" style="margin-bottom:12px;color:var(--track-fate)">7 天后回来看看：你当时听了吗？复盘页「推演回看」会留着这题，只存在这台设备上。</p>
     <button class="btn-primary" id="xj-finish-btn" onclick="finishXj()">收下这个视角，离开</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.2 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.3 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
 </div><!-- /#phone -->
@@ -1355,7 +1359,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 <script>
 "use strict";
 /* ============================================================
- * AETHEL 棱镜 · S1 体验沙箱 v0.8.2
+ * AETHEL 棱镜 · S1 体验沙箱 v0.8.3
  * 分区：①状态与持久化 ②导航 ③引导旅程 ④相似度组件（三分拆）
  *       ⑤打分与回偿 ⑥仪式与主界面 ⑦降级演示 ⑦.5玄机 ⑦.6养成 ⑧反馈面板
  * ============================================================ */
@@ -2951,7 +2955,7 @@ function xjSkipCost() {
 /* ---------- ⑦.8.5 v0.8.0 · T-WASM-01：红线 WASM 真引擎进沙箱（前端硬编码词表退役为降级兜底） ----------
    位码语义 = level×100+kind：0 绿直通 · 101 黄区页脚（放行+结果页页脚展示引擎提示） · 203 兜底拦截 ·
    204 危机安全回应 · 205 专业转介。引擎文件 prism_wasm.wasm 来自 prism 主仓 core/prism-wasm
-   （与 CI 六关卡同一份 Rust 红线管线，71 条攻击回归武装）；加载失败 / 超时 / 运行期异常 →
+   （与 CI 六关卡同一份 Rust 红线管线，103 条攻击回归武装 · v0.8.3 起含委婉求助层）；加载失败 / 超时 / 运行期异常 →
    自动降级为本地简化词表，界面如实标注「本地引擎未就绪，已用简化规则」。 */
 var redlineEngine = { ready: false, wasm: null, err: "" };
 var RL_FALLBACK_NOTE = "（本地引擎未就绪，已用简化规则）";
@@ -2979,7 +2983,7 @@ function bootRedline() {
       clearTimeout(timer);
       redlineEngine.wasm = mod.instance.exports;
       redlineEngine.ready = true;
-      paintRedlineStatus("红线引擎：WASM 真逻辑已载入（prism-redline · 71 条攻击回归武装）");
+      paintRedlineStatus("红线引擎：WASM 真逻辑已载入（prism-redline · 103 条攻击回归武装）");
     })
     .catch(function (e) {
       clearTimeout(timer);
@@ -3223,7 +3227,7 @@ function paintSwBadge(txt) {
     return;
   }
   navigator.serviceWorker.register("sw.js").then(function () {
-    paintSwBadge("✓ 已可离线使用（缓存 v0.8.2 · 版本升级自动换新）");
+    paintSwBadge("✓ 已可离线使用（缓存 v0.8.3 · 版本升级自动换新）");
   }).catch(function () {
     paintSwBadge("离线注册未成功——不影响使用，部署环境允许时会自动激活。");
   });
@@ -3352,7 +3356,7 @@ function buildExportTxt() {
   var list = loadFb();
   var lines = [
     "AETHEL 棱镜 · 体验沙箱反馈导出",
-    "版本：SPEC-S1-sandbox v0.8.2（体验版）",
+    "版本：SPEC-S1-sandbox v0.8.3（体验版）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
     "「分身有多像你」终点：" + simTotal() + "%（已声明/已验证/已纠偏） · 数据就绪度：" + (state.dataReady || 0) + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
