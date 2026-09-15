@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.0</title>
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.1</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#C9A227">
 <!--
-  AETHEL 棱镜 · 体验沙箱 v0.8.0「红线 WASM 真引擎」补丁
+  AETHEL 棱镜 · 体验沙箱 v0.8.1「互测响应」补丁
   单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开（PWA 的 manifest/sw 为必需例外）
+  v0.8.1：互测响应（v2 线实测报告）——反馈通道红线全量对齐：204 安全回应 / 203·205 引擎提示，
+          一律不拒收；「数据在哪」表格补第 7 行（引导键），7 键 7 行对齐；五步路线①直达投喂关卡
+          （已选方向直落关卡区，未选则选完自动落关）；焚毁闭环 K0→焚毁→K1 对账证据包产出
   v0.8.0：T-WASM-01 阶段一——红线 WASM 真逻辑进沙箱：redlineCheck 统一入口（WASM 优先，
           4s 超时/加载失败/运行期异常自动降级简化词表并如实标注「本地引擎未就绪」）；
           位码语义 0 直通 / 101 黄区页脚 / 203 兜底拦截 / 204 危机安全回应 / 205 专业转介；
@@ -660,7 +663,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption">不会读取你的任何真实信息；你喂的、你写的，都只存在这台设备的浏览器里。</p>
     </div>
     <button class="btn-primary" onclick="go('s-register')">开始养成我的分身</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（本地昵称，可跳过） ================= -->
@@ -673,7 +676,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" onclick="doRegister()">进入棱镜</button>
       <button class="btn-ghost" onclick="doGuest()">跳过，先随便逛逛</button>
       <p class="caption" style="margin-top:4px">昵称只存在这台设备的浏览器里；跳过即为访客，你输入的内容不会被保存。</p>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -689,7 +692,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('calm')">🌿 心里少点紧绷</button>
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('relate')">🤝 重要关系更顺</button>
       <button class="btn-ghost" onclick="pickFocus('')">都说不上来，随便看看</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -705,7 +708,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
       <p class="caption" style="margin-bottom:var(--block-gap)">未开放的维度会诚实显示 0%——它没有假装已经很懂你。</p>
       <button class="btn-primary" onclick="go('s-auth')">继续</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -730,7 +733,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
     <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
     <p class="caption" style="margin-top:8px">授权只提升「数据就绪度」——分身有多像你，要靠你亲手喂出来。</p>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 4 · 基线报告生成（<3s 加载过场） ================= -->
@@ -740,7 +743,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:8px">真实规格要求 3 秒内完成</p>
       <div class="loading-bar"><div class="loading-fill" id="load-fill"></div></div>
       <div class="skel"></div><div class="skel"></div><div class="skel"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -774,7 +777,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
     </div>
     <button class="btn-primary" onclick="go('s-dual')">查看首次对照解读</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
@@ -808,7 +811,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:4px">你的体感打分已经进入校准维度。</p>
     </div>
     <button class="btn-primary" onclick="startRitual()">完成解读，点亮镜灵</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 7 · 五 Tab 主界面 ================= -->
@@ -866,7 +869,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p class="caption" style="margin-top:8px">想恢复正常演示？到设置里关掉「演示：证据不足时的样子」即可。</p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 时机 -->
@@ -908,7 +911,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <span class="pill pill-fate">单源证据</span>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 复盘（Weekly Mirror + 应验成绩单） -->
@@ -944,7 +947,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div id="xj-review"></div>
       <!-- v0.6.3 · 决策账本雏形：当时证据 → 我的选择 → 7 天后结果 -->
       <div id="dec-ledger"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 分身 -->
@@ -973,7 +976,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div class="card">
         <p class="caption">「分身有多像你」由三部分长成：<strong style="color:var(--text-primary)">已声明</strong>（你主动喂的信息）、<strong style="color:var(--text-primary)">已验证</strong>（模仿测试里你判「像我」的）、<strong style="color:var(--text-primary)">已纠偏</strong>（你纠正过它的）。决策、传承两部分还没开放，会诚实显示 0%——因为我们还没有你足够的数据。</p>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 养成（本体养成：方向 → 投喂关卡 → 相似度 → 模仿测试 → 焚毁回显） -->
@@ -1040,7 +1043,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p id="grow-burn-ok" style="display:none;color:var(--semantic-normal);margin-top:8px;font-size:var(--fs-subtitle)"></p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -1060,6 +1063,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
         <tr><td>反馈</td><td>这台设备的浏览器 · 每条可撤回</td></tr>
         <tr><td>决策账本</td><td>这台设备的浏览器 · 重置连它一起清</td></tr>
         <tr><td>分身</td><td>只在这台设备</td></tr>
+        <tr><td>引导</td><td>这台设备的浏览器 · 「不再显示」只记这一个键，焚毁一并清除</td></tr>
       </table>
       <p class="caption" style="margin-top:8px">就这些。没有服务器，没有账号，没有同步。本应用写入的浏览器存储键共 7 个——「一键焚毁」和「重置旅程」是真的删除它们，红区拒答与安全回应对原始问法从不落盘。</p>
       <button class="btn-ghost" onclick="toggleTechKeys()" id="tech-keys-btn">技术核对（给会按 F12 的你）▾</button>
@@ -1086,8 +1090,9 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
       <p class="caption">这是 AETHEL 棱镜的体验沙箱，「数字分身本体 + 玄机天窗」的体验版：本体是投喂养成（选方向、喂数据、看相似度、考模仿），玄机模式只是界面里的一扇天窗。全部内容为演示数据，不读取任何真实信息，你喂的、你写的都只存在这台设备的浏览器里。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.0（体验版）</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.1（体验版）</p>
       <p class="caption" style="margin-top:4px" id="redline-status">红线引擎：载入中…</p>
+      <p class="caption" style="margin-top:4px">v0.8.1 更新（互测响应 · 逐条认领 v2 线实测报告）：①反馈通道说与做对齐——全站唯一反馈入口（右下角「记一笔感受」，各页同此入口）在危机词（位码 204 → 安全回应）之外，判决/转介类（位码 203/205）也会把引擎的话一并留给你；一律不拒收，感受照常记下、原文只存本机。如实说明：v2 的两句测试语（「想睡过去不再醒来」「撑得好累」）经 WASM 引擎实测位码为 0——不是接线缺失，是引擎对委婉表达的危机覆盖不足，已回传红线共建池建议扩词；②「数据在哪」表格补上第 7 行（引导键），上面说的 7 个键和表格 7 行对齐了；③五步路线「① 喂数据」直达投喂关卡——已选方向直接落到关卡区，未选方向时选完自动落到关卡（选方向+跳关二合一）；④焚毁闭环完成一次 K0→焚毁→K1 正式对账：7 键播种 → 完整仪式 → 0 残留 + 回执全文，证据包随本版归档。</p>
       <p class="caption" style="margin-top:4px">v0.8.0 更新：红线检查换上 WASM 真引擎——「自由问一件」和反馈输入的红线判定改由 prism 主仓同一份 Rust 红线管线执行（编译成本地 WASM 文件，71 条攻击回归武装，全程本地、不出这台设备），前端硬编码词表退役、只留作兜底；引擎没载入或运行异常时自动降级，拦截卡与安全回应上如实标注「本地引擎未就绪，已用简化规则」；位码语义落地——绿直通 / 黄区（如替他人做决定类）放行并在结果页页脚展示引擎提示 / 兜底拦截与专业转介（合同、投资类）展示引擎回应原文 / 危机词走安全回应卡；反馈里的危机词触发安全回应但不拒收；上方新增「红线引擎」状态行，离线缓存同步预载引擎文件。</p>
       <p class="caption" style="margin-top:4px">v0.7.2 更新（热修）：真机上焚毁仪式按住就被指尖抖动取消、永远点不燃——现在只有真正抬手或明显滑走（&gt;24px）才算放弃，触屏抖动不再误伤，并补了无 PointerEvent 老浏览器的 touch 回退与长按防菜单；「动画没感受到」修复——掉帧降级从「首 200ms 平均 &gt;32ms 一刀切」改为「400ms 热身期后持续 20 帧 &gt;45ms 才降级」，粒子密度随 dpr 缩放（dpr3 手机粒子量减到约 1/3），正常手机能看到完整的像素燃尽动画。</p>
       <p class="caption" style="margin-top:4px">v0.7.1 更新：「重置旅程」升级为焚毁仪式（L2 时刻首个试点）——不再是弹窗确认，而是按住 800ms 看着「数据纸」像素级燃尽、余烬熄灭、静默 300ms 后打印焚毁回执：回执每一行对应一次真实的存储删除（删一行打一行，删后核验，失败会如实标红），结算行如实报告本机残留键数；系统开「减弱动态效果」或低端机自动降级为静态帧，回执末尾诚实标注「已用简化动效」；烧完点「回到第一天」重载回首次访问态。真闭环承诺不变：7 个存储键（含历史遗留的引导键）一个不留。</p>
@@ -1113,7 +1118,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
     <button class="btn-danger" onclick="resetJourney()">⚠ 重置旅程（清除昵称、养成、分身、推演账本与你写的全部反馈）</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9 · 玄机模式门厅（独立天窗） ================= -->
@@ -1155,7 +1160,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 
     <p class="caption" style="margin:var(--block-gap) 0 12px">次数上限是产品价值观，不出售。这里没有任何「付费加算」入口。</p>
     <button class="btn-ghost" onclick="exitXj()">离开玄机模式</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9.5 · 认真三问（中/重推演的前置门槛） ================= -->
@@ -1216,7 +1221,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <p style="margin:var(--block-gap) 0 12px"><span class="xj-burn">◌ 本次记录阅后即焚 · 结果仅你可见，请勿截屏分享</span></p>
     <p class="caption" style="margin-bottom:12px;color:var(--track-fate)">7 天后回来看看：你当时听了吗？复盘页「推演回看」会留着这题，只存在这台设备上。</p>
     <button class="btn-primary" id="xj-finish-btn" onclick="finishXj()">收下这个视角，离开</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.0 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.1 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
 </div><!-- /#phone -->
@@ -1325,7 +1330,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 <script>
 "use strict";
 /* ============================================================
- * AETHEL 棱镜 · S1 体验沙箱 v0.8.0
+ * AETHEL 棱镜 · S1 体验沙箱 v0.8.1
  * 分区：①状态与持久化 ②导航 ③引导旅程 ④相似度组件（三分拆）
  *       ⑤打分与回偿 ⑥仪式与主界面 ⑦降级演示 ⑦.5玄机 ⑦.6养成 ⑧反馈面板
  * ============================================================ */
@@ -2528,6 +2533,20 @@ function pickGrowDir(key) {
   grow.dir = key;
   saveGrow();
   renderGrow();
+  scrollToFeedLevels(); /* v0.8.1 · 选完方向自动落到投喂关卡（选方向+跳关二合一） */
+}
+/* v0.8.1 · 五步路线①直达投喂关卡（S1 修复）：已选方向 → 直接滚动到关卡区；
+   未选方向 → 停在选方向（结构上必须先选），选完由 pickGrowDir 自动落关 */
+function scrollToFeedLevels() {
+  setTimeout(function () {
+    var el = document.getElementById("grow-levels");
+    if (el && el.offsetParent !== null) el.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, 80);
+}
+function goFeedLevels() {
+  switchTab("tab-grow");
+  renderGrow(); /* 确保关卡区按最新方向渲染后再滚动 */
+  if (grow.dir) scrollToFeedLevels();
 }
 function changeGrowDir() {
   if (!window.confirm("换个重点培育方向？已喂过的数据和相似度都会保留，只改之后的侧重。")) return;
@@ -2911,7 +2930,7 @@ function renderSteps() {
   var l = xjLedger();
   var xjUsed = (l.light.n + l.mid.n + l.heavy.n > 0) || loadXjReview().length > 0;
   var steps = [
-    { label: "① 喂数据", done: fedN > 0, act: "switchTab('tab-grow')" },
+    { label: "① 喂数据", done: fedN > 0, act: "goFeedLevels()" },
     { label: "② 看相似度", done: !!grow.dir, act: "switchTab('tab-grow')" },
     { label: "③ 考它模仿", done: mimicN > 0, act: "switchTab('tab-grow')" },
     { label: "④ 问一次玄机", done: xjUsed, act: "openXj()" },
@@ -3096,7 +3115,7 @@ function paintSwBadge(txt) {
     return;
   }
   navigator.serviceWorker.register("sw.js").then(function () {
-    paintSwBadge("✓ 已可离线使用（缓存 v0.8.0 · 版本升级自动换新）");
+    paintSwBadge("✓ 已可离线使用（缓存 v0.8.1 · 版本升级自动换新）");
   }).catch(function () {
     paintSwBadge("离线注册未成功——不影响使用，部署环境允许时会自动激活。");
   });
@@ -3162,12 +3181,19 @@ function saveFb() {
   document.getElementById("fb-saved").style.display = "block";
   document.getElementById("fb-list").style.display = "none";
   document.getElementById("fb-export").style.display = "none";
-  /* 危机词安全回应：感受已记下，同时把安全话放到成功视图（引擎原文优先，降级用本地文案） */
+  /* v0.8.1 · 反馈红线全量对齐（认领 v2 实测报告 §3.1）：危机词（204）→ 安全回应；
+     判决/转介类（203/205）→ 引擎提示；一律不拒收，感受照常记下、原文仍只存本机 */
   var safety = document.getElementById("fb-safety");
   if (rc && rc.code === 204) {
     safety.textContent = (rc.engine === "wasm" && rc.text)
-      ? rc.text + "（红线引擎 · 位码 204 危机安全回应 · WASM 真逻辑）"
-      : "我在。你现在安全吗？如果此刻很难受，请拨打当地心理援助热线，或马上联系一个你信任的人。（红线引擎 · 位码 204 危机安全回应" + RL_FALLBACK_NOTE + "）";
+      ? rc.text + "（红线引擎 · 位码 204 危机安全回应 · WASM 真逻辑 · 反馈已照常记下）"
+      : "我在。你现在安全吗？如果此刻很难受，请拨打当地心理援助热线，或马上联系一个你信任的人。（红线引擎 · 位码 204 危机安全回应 · 反馈已照常记下" + RL_FALLBACK_NOTE + "）";
+    safety.style.display = "block";
+  } else if (rc && (rc.code === 203 || rc.code === 205)) {
+    var rcKind = rc.code === 205 ? "专业转介" : "红线话题";
+    var rcText = rc.text || "";
+    safety.textContent = "你写的这句触到了「" + rcKind + "」类话题——反馈我们照收，这句引擎的话也留给你：" + rcText +
+      "（红线引擎 · 位码 " + rc.code + " 提示 · " + (rc.engine === "wasm" ? "WASM 真逻辑" : "简化规则" + RL_FALLBACK_NOTE) + " · 反馈不拒收）";
     safety.style.display = "block";
   } else {
     safety.style.display = "none";
@@ -3218,7 +3244,7 @@ function buildExportTxt() {
   var list = loadFb();
   var lines = [
     "AETHEL 棱镜 · 体验沙箱反馈导出",
-    "版本：SPEC-S1-sandbox v0.8.0（体验版）",
+    "版本：SPEC-S1-sandbox v0.8.1（体验版）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
     "「分身有多像你」终点：" + simTotal() + "%（已声明/已验证/已纠偏） · 数据就绪度：" + (state.dataReady || 0) + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
