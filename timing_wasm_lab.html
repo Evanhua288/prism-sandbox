@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>时机页 WASM 接入实验室 · T-WASM-01 阶段二（候选 · 未上线）</title>
+<!--
+  timing_wasm_lab.html —— 时机页排盘 WASM 接入的独立测试页（候选 · 未上线）
+
+  ★ 本页即「开关」：主沙箱 index.html 未引用本页与 timing_wasm_glue.js，
+    线上用户不可达；glue 层 WASM_TIMING_ENABLED 恒为 false（切换条件见 glue 文件头）。
+  ★ 切换条件（全部满足才可在正式时机页启用，详见《T-WASM-01阶段二就绪报告 V0.1》）：
+    ①A+ 口径工单签署 ②金标 v1.1 民事时重定 ③22/22 + 103/103 双回归
+    ④v2 标注文案回传对齐 ⑤负责人切换指令 + 主线推 git。
+  ★ 口径现状：A+ 工单未签，引擎 cast() 按真太阳时（tst）排盘；本页一切输出
+    一律附 tst 现状标注，不提前展示「按北京时间排」（诚实哲学 D-6）。
+-->
+<style>
+  body { background:#0d1117; color:#e6edf3; font-family:system-ui,"Microsoft YaHei",sans-serif; max-width:860px; margin:24px auto; padding:0 16px; }
+  h1 { font-size:20px; } h2 { font-size:15px; margin-top:22px; }
+  .meta { color:#8b949e; font-size:13px; line-height:1.7; }
+  .flag { display:inline-block; background:#3d2323; color:#f85149; border:1px solid #f85149; border-radius:6px; padding:2px 10px; font-size:13px; font-weight:600; }
+  fieldset { border:1px solid #30363d; border-radius:8px; padding:12px 16px; margin-top:14px; }
+  legend { color:#8b949e; font-size:13px; padding:0 6px; }
+  label { font-size:14px; margin-right:14px; display:inline-block; margin-top:6px; }
+  input,select { background:#161b22; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:6px 8px; font-size:14px; }
+  button { background:#7a5c1e; color:#ffe9a8; border:1px solid #d4a017; border-radius:8px; padding:8px 18px; font-size:15px; cursor:pointer; margin-top:10px; }
+  #card { background:#161b22; border:1px solid #d4a017; border-radius:10px; padding:16px; margin-top:16px; display:none; }
+  .pillars { display:flex; gap:10px; margin:10px 0; }
+  .pillar { flex:1; background:#0d1117; border:1px solid #30363d; border-radius:8px; text-align:center; padding:10px 4px; }
+  .pillar .gz { font-size:24px; color:#ffd766; font-weight:700; }
+  .pillar .lbl { font-size:12px; color:#8b949e; margin-top:4px; }
+  #notice { border-left:3px solid #d4a017; background:#1a1607; padding:10px 12px; margin-top:12px; font-size:13px; line-height:1.7; }
+  #detail { font-size:13px; color:#8b949e; margin-top:10px; line-height:1.8; }
+  #selftest { margin-top:18px; font-size:14px; white-space:pre-wrap; background:#161b22; border:1px solid #30363d; border-radius:8px; padding:12px; }
+  .pass { color:#3fb950; } .fail { color:#f85149; }
+</style>
+</head>
+<body>
+<h1>时机页 WASM 接入实验室 <span class="flag">开关关闭 · 候选未上线</span></h1>
+<p class="meta">
+T-WASM-01 阶段二预置 · 排盘引擎跑在浏览器里（引擎源码 = prism 主仓 core/prism-engine，CI 六关卡同一份代码）<br>
+wasm 产物：prism_wasm_engine.wasm（93,276 B，红线+排盘；与 CI artifact 同参数构建）<br>
+口径现状：A+ 工单未签，引擎按真太阳时排盘；hour_basis 参数已在 glue 预留（现行 ABI 忽略，签署后生效）
+</p>
+
+<fieldset>
+  <legend>排盘输入（民用钟面时刻 · 参数仅存本机，零数据出网）</legend>
+  <label>出生时刻 <input type="datetime-local" id="dt" value="2020-01-25T10:30" step="1"></label>
+  <label>出生地经度（微度） <input type="number" id="lon" value="116407400" style="width:130px"></label>
+  <label><input type="checkbox" id="dst"> 1986–1991 夏令时窗口内出生</label>
+  <label>口径
+    <select id="basis">
+      <option value="0" selected>民事时（A+ 默认 · 预留，签署后生效）</option>
+      <option value="1">真太阳时（引擎现状）</option>
+    </select>
+  </label>
+  <br>
+  <button id="go">排盘（WASM 真逻辑）</button>
+</fieldset>
+
+<div id="card">
+  <div style="font-size:13px;color:#8b949e">四柱（WASM 引擎输出）</div>
+  <div class="pillars">
+    <div class="pillar"><div class="gz" id="py">—</div><div class="lbl">年柱</div></div>
+    <div class="pillar"><div class="gz" id="pm">—</div><div class="lbl">月柱</div></div>
+    <div class="pillar"><div class="gz" id="pd">—</div><div class="lbl">日柱</div></div>
+    <div class="pillar"><div class="gz" id="ph">—</div><div class="lbl">时柱</div></div>
+  </div>
+  <div id="notice"></div>
+  <div id="detail"></div>
+</div>
+
+<h2>接入自检（加载即跑）</h2>
+<div id="selftest">加载中…</div>
+
+<script src="timing_wasm_glue.js"></script>
+<script>
+// 实验室页：显式用于干跑验证；正式时机页接入时须待 glue 总开关切换条件全部满足。
+const $ = (id) => document.getElementById(id);
+const G = window.PrismTimingGlue;
+let EX = null;
+
+async function boot() {
+  try {
+    EX = await G.load("prism_wasm_engine.wasm");
+  } catch (e) {
+    $("selftest").innerHTML = '<span class="fail">wasm 加载失败：' + e + '</span>';
+    window.__RESULTS = { error: String(e) };
+    return;
+  }
+  runSelfTest();
+}
+
+function castNow() {
+  const v = $("dt").value; // "YYYY-MM-DDTHH:MM[:SS]" 民用钟面
+  if (!v) { alert("请先填出生时刻"); return; }
+  const [d, t] = v.split("T");
+  const [Y, M, D] = d.split("-").map(Number);
+  const tp = t.split(":").map(Number);
+  const basis = Number($("basis").value);
+  try {
+    const r = G.castFromCivil(EX, {
+      year: Y, month: M, day: D, hour: tp[0], minute: tp[1] || 0, second: tp[2] || 0,
+      longitudeMicrodeg: Number($("lon").value),
+      chinaDst1986_1991: $("dst").checked,
+      hourBasis: basis,
+    });
+    $("py").textContent = r.pillars.year.name;
+    $("pm").textContent = r.pillars.month.name;
+    $("pd").textContent = r.pillars.day.name;
+    $("ph").textContent = r.pillars.hour.name;
+    // 口径标注（展示层义务，A+ 第 2 条；签署前恒为 tst 现状标注，见 glue basisNotice）
+    $("notice").innerHTML = "<b>时辰口径声明</b><br>" + r.notice.text +
+      (r.notice.plain ? "<br>" + r.notice.plain : "");
+    $("detail").textContent =
+      "真太阳时 " + r.tst.join("-") + "（修正 " + (r.tstCorrectionMs / 60000).toFixed(1) + " 分钟）· " +
+      "民用时 " + r.civil.join("-") + " · 子时归属：" + r.ziName + " · rules " + r.rulesVersion;
+    $("card").style.display = "block";
+  } catch (e) {
+    $("card").style.display = "block";
+    $("notice").innerHTML = '<span class="fail">' + e.message + "</span>";
+    $("detail").textContent = "";
+  }
+}
+
+function runSelfTest() {
+  const lines = [];
+  let ok = 0, total = 0;
+  const t = (name, fn) => {
+    total++;
+    try { fn(); ok++; lines.push("PASS " + name); }
+    catch (e) { lines.push("FAIL " + name + " —— " + e.message); }
+  };
+  const eq = (a, b, what) => { if (a !== b) throw new Error(what + ": got " + a + " want " + b); };
+
+  // 自检 1：GV-2026-001（民用 2020-01-25 10:30 北京）四柱须与金标一致（己亥/丁丑/丁卯/乙巳）
+  t("GV-2026-001 四柱零差异", () => {
+    const r = G.castFromCivil(EX, { year: 2020, month: 1, day: 25, hour: 10, minute: 30 });
+    eq(r.pillars.year.name, "己亥", "年柱"); eq(r.pillars.month.name, "丁丑", "月柱");
+    eq(r.pillars.day.name, "丁卯", "日柱"); eq(r.pillars.hour.name, "乙巳", "时柱");
+    eq(r.zi, 2, "zi");
+  });
+  // 自检 2：红线 ABI 同 wasm 共存（危机词 → 204）
+  t("红线 ABI 共存（204 安全回应）", () => {
+    const bytes = new TextEncoder().encode("最近总是想死"); // banned-allow：拦截测试用例
+    const ptr = EX.prism_alloc(bytes.length);
+    new Uint8Array(EX.memory.buffer, ptr, bytes.length).set(bytes);
+    const code = EX.prism_redline_check(ptr, bytes.length);
+    EX.prism_dealloc(ptr, bytes.length);
+    eq(code, 204, "位码");
+  });
+  // 自检 3：hour_basis 预留参数现行 ABI 下被忽略（结果与十参一致，不报错）
+  t("hour_basis 预留参数兼容", () => {
+    const a = G.castFromCivil(EX, { year: 2024, month: 8, day: 15, hour: 14, minute: 0, longitudeMicrodeg: 87616800, hourBasis: 0 });
+    const b = G.castFromCivil(EX, { year: 2024, month: 8, day: 15, hour: 14, minute: 0, longitudeMicrodeg: 87616800, hourBasis: 1 });
+    eq(a.pillars.hour.name, b.pillars.hour.name, "时柱（现行 ABI 忽略第 11 参，A+ 后分化）");
+  });
+  // 自检 4：口径标注诚实性——签署前选择民事时也须给出 tst 现状标注
+  t("口径标注诚实性（未签不显示民事版）", () => {
+    const n = G.basisNotice(0);
+    if (n.text.includes("按北京时间排")) throw new Error("签署前不得显示民事版标注");
+    eq(n.basis, "civil_pending_a_plus", "basis 标记");
+  });
+  // 自检 5：表外年份返回 OutOfRange（-3），不猜测（民用 2036-06-01 → UTC 2036，出表）
+  t("表外年份 OutOfRange(-3)", () => {
+    try { G.castFromCivil(EX, { year: 2036, month: 6, day: 1, hour: 12, minute: 0 }); throw new Error("未抛错"); }
+    catch (e) { eq(e.code, -3, "错误码"); }
+  });
+
+  const allOk = ok === total;
+  $("selftest").innerHTML = "开关状态 WASM_TIMING_ENABLED = <b>" + G.WASM_TIMING_ENABLED +
+    "</b>（false=未上线，切换条件见 glue 文件头）\n" +
+    lines.join("\n") + '\n<span class="' + (allOk ? "pass" : "fail") + '">自检 ' + ok + "/" + total + (allOk ? " 全绿" : " 有失败") + "</span>";
+  window.__RESULTS = { ok, total, lines, flag: G.WASM_TIMING_ENABLED };
+}
+
+$("go").addEventListener("click", castNow);
+boot();
+</script>
+</body>
+</html>
