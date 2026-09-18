@@ -3,12 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.7</title>
+<title>AETHEL 棱镜 · 体验沙箱 SPEC-S1-sandbox v0.8.8</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#C9A227">
 <!--
-  AETHEL 棱镜 · 体验沙箱 v0.8.7「抢修批次」补丁
+  AETHEL 棱镜 · 体验沙箱 v0.8.8「反馈发送白屏热修」补丁
   单文件 · 零外部依赖 · 零网络请求 · file:// 直接可开（PWA 的 manifest/sw 为必需例外）
+  v0.8.8：热修（认领鸿蒙真机 v0.8.7 实测 P0）——
+          废除一切 location.href="mailto:" 导航（鸿蒙 WebView 无邮件应用接管会被导航成白屏且回不去）：
+          「发送给开发团队」改为复制反馈到剪贴板（navigator.clipboard，不支持则 execCommand 回退）
+          + 复用统一确认层弹「已复制你的反馈」+ 内容预览 + 「完成了」回原页，全程不离开当前页；
+          导出视图邮件按钮同步改为「复制后去邮件 App 发送」；全站外链跳转排查（tel:/window.open/裸 http 链：零命中）；
+          manifest 版本字段 0.8.6 滞留一并补齐。
   v0.8.7：抢修批次（认领 2026-09-17 三轨自检报告）——
           P0-A 五具名题型提交崩溃修复（xjEchoHTML 空指针降级 + 推演异常次数/冷却完整回滚 + 诚实错误卡）；
           P0-B 多标签 localStorage 竞态修复（写时读合并 + storage 事件重同步，焚毁不被旧内存复活）；
@@ -723,7 +729,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption">不会读取你的任何真实信息；你喂的、你写的，都只存在这台设备的浏览器里。</p>
     </div>
     <button class="btn-primary" onclick="go('s-register')">开始养成我的分身</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 2 · 注册（本地昵称，可跳过） ================= -->
@@ -736,7 +742,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" onclick="doRegister()">进入棱镜</button>
       <button class="btn-ghost" onclick="doGuest()">跳过，先随便逛逛</button>
       <p class="caption" style="margin-top:4px">昵称只存在这台设备的浏览器里；跳过即为访客，你输入的内容不会被保存。</p>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -752,7 +758,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('calm')">🌿 心里少点紧绷</button>
       <button class="btn-primary" style="margin-bottom:12px" onclick="pickFocus('relate')">🤝 重要关系更顺</button>
       <button class="btn-ghost" onclick="pickFocus('')">都说不上来，随便看看</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -768,7 +774,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div style="margin:var(--block-gap) 0"><span class="pill pill-gold">镜灵 L1 · 未点亮</span></div>
       <p class="caption" style="margin-bottom:var(--block-gap)">未开放的维度会诚实显示 0%——它没有假装已经很懂你。</p>
       <button class="btn-primary" onclick="go('s-auth')">继续</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -793,7 +799,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <button class="btn-primary" id="btn-auth" onclick="doAuthorize()">接通设备（模拟）</button>
     <button class="btn-ghost" onclick="skipAuthorize()">暂不，先看看</button>
     <p class="caption" style="margin-top:8px">授权只提升「数据就绪度」——分身有多像你，要靠你亲手喂出来。</p>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 4 · 基线报告生成（<3s 加载过场） ================= -->
@@ -805,7 +811,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div class="skel"></div><div class="skel"></div><div class="skel"></div>
       <!-- v0.8.7 · P0-C：加载页防死锁出口（5 秒未完成时由 JS 点亮，温和语气） -->
       <button class="btn-ghost" id="loading-escape" style="display:none;margin-top:24px" onclick="goHome()">我好像卡住了，带我回家</button>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -839,7 +845,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p id="score-done" style="display:none;color:var(--semantic-normal);margin-top:12px;font-size:var(--fs-body)">已收到，下次判断我会记得。</p>
     </div>
     <button class="btn-primary" onclick="go('s-dual')">查看首次对照解读</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 6 · 首次双轨解读（点亮镜灵的关键仪式前置页） ================= -->
@@ -873,7 +879,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-top:4px">你的体感打分已经进入校准维度。</p>
     </div>
     <button class="btn-primary" onclick="startRitual()">完成解读，点亮镜灵</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 7 · 五 Tab 主界面 ================= -->
@@ -931,7 +937,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p class="caption" style="margin-top:8px">想恢复正常演示？到设置里关掉「演示：证据不足时的样子」即可。</p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 时机 -->
@@ -973,7 +979,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <span class="pill pill-fate">单源证据</span>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 复盘（Weekly Mirror + 应验成绩单） -->
@@ -1009,7 +1015,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div id="xj-review"></div>
       <!-- v0.6.3 · 决策账本雏形：当时证据 → 我的选择 → 7 天后结果 -->
       <div id="dec-ledger"></div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 分身 -->
@@ -1038,7 +1044,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <div class="card">
         <p class="caption">「分身有多像你」由三部分长成：<strong style="color:var(--text-primary)">已声明</strong>（你主动喂的信息）、<strong style="color:var(--text-primary)">已验证</strong>（模仿测试里你判「像我」的）、<strong style="color:var(--text-primary)">已纠偏</strong>（你纠正过它的）。决策、传承两部分还没开放，会诚实显示 0%——因为我们还没有你足够的数据。已声明里再分两层：<strong style="color:var(--text-primary)">真实投喂</strong>（第〇关，你亲手打的一句话）与<strong style="color:var(--text-primary)">演示成长</strong>（五关模拟），分开记账、随时可查。</p>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
 
     <!-- Tab · 养成（本体养成：方向 → 投喂关卡 → 相似度 → 模仿测试 → 焚毁回显） -->
@@ -1109,7 +1115,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
           <p id="grow-burn-ok" style="display:none;color:var(--semantic-normal);margin-top:8px;font-size:var(--fs-subtitle)"></p>
         </div>
       </div>
-      <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+      <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
     </div>
   </section>
 
@@ -1159,7 +1165,8 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <div class="card">
       <h2 style="margin-bottom:8px">沙箱说明</h2>
       <p class="caption">这是 AETHEL 棱镜的体验沙箱，「数字分身本体 + 玄机天窗」的体验版：本体是投喂养成（选方向、喂数据、看相似度、考模仿），玄机模式只是界面里的一扇天窗。全部内容为演示数据，不读取任何真实信息，你喂的、你写的都只存在这台设备的浏览器里。</p>
-      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.7（体验版）</p>
+      <p class="caption" style="margin-top:8px">版本号：SPEC-S1-sandbox v0.8.8（体验版）</p>
+      <p class="caption" style="margin-top:4px">v0.8.8 更新（热修 · 认领鸿蒙真机实测 P0）：「发送给开发团队」不再跳转邮件 App——在鸿蒙等没有邮件应用接管的环境里，旧做法会把页面导航成白屏且回不去。新行为：点发送后反馈内容自动复制到剪贴板（不支持的系统用兼容方式复制），弹出确认层告诉你「已复制你的反馈，粘贴到微信/邮件发给我们就能收到」，附上你写的内容预览，点「完成了」回到原页——全程不离开本页。导出视图里的邮件按钮同步改为「复制后去邮件 App 发送」；全站外链跳转排查完成（无其他同类隐患）。</p>
       <p class="caption" style="margin-top:4px">v0.8.7 更新（抢修批次 · 认领 9/17 三轨自检报告）：①五个具名题型（姻缘合盘/数字能量/本周运势/起名顾问/重大择时）提交即崩的空指针已修——任何题型提交都有可见反馈；推演过程一旦异常，次数与冷却完整回滚并出诚实错误卡，认真的用户不再被惩罚；②多标签页竞态修复——养成/台账/反馈/回看/决策全部改为写时读合并 + storage 事件重同步，另一标签的写入不再被静默覆盖，焚毁也不会被旧内存复活；③防死锁——每页右上角常驻「⌂ 带我回家」，加载页 5 秒未完成给出温和出口，全局未捕获异常兜底横幅（「我刚才愣了一下——你的数据没丢」）；④首程完成守卫——分身已点亮的用户不再被强制重走注册五步；⑤模仿测试防刷——判定间隔小于 2 秒不计不推进，当日上限 8 次；⑥诚实口径——未接设备一律不输出「你的 deep sleep 48 分钟」类第二人称假数值，五维状态卡/主建议/财运模板全部改为演示示例口径；⑦反馈联系人参数化（占位邮箱，公开源码不再写死个人联系方式）；⑧委婉危机词补丁词表批次三——「消失了也挺好」类表达现在被接住（位码 204，来源如实标注为 JS 补充层）；⑨4 处原生 window.confirm 统一为自定义确认层；冷却文案叠字（「约 1 天后后可再问」）修复。</p>
       <p class="caption" style="margin-top:4px">v0.8.6 更新（答问止血包 · 三档智能梯子 C 档）：时机页/玄机「自由问一件」不再答非所问——回答区首行复述你的问题并明示依据（「规则模板解读 · 本地理解层开发中」，不装智能）；新增五域轻分类（事业/感情/决策/健康/其他，结果在回答里写明）；五域各 3–4 条精写文案，每条引用本地排盘引擎对当下时刻的真算结果（四柱/时辰/真太阳时，写死的示例时段退役），引擎未就绪时如实标注「未引用盘面数据」；自由输入旁新增 5 枚引导问题（点选即填）。危机词路径与红线引擎一字未动；排盘口径仍为真太阳时（A+ 工单待签，引用处如实标注）。</p>
       <p class="caption" style="margin-top:4px" id="redline-status">红线引擎：载入中…</p>
@@ -1194,7 +1201,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <button class="btn-primary" style="font-size:var(--fs-body);padding:12px" onclick="openFbList()">查看反馈清单</button>
     </div>
     <button class="btn-danger" onclick="resetJourney()">⚠ 重置旅程（清除昵称、养成、分身、推演账本与你写的全部反馈）</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9 · 玄机模式门厅（独立天窗） ================= -->
@@ -1236,7 +1243,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 
     <p class="caption" style="margin:var(--block-gap) 0 12px">次数上限是产品价值观，不出售。这里没有任何「付费加算」入口。</p>
     <button class="btn-ghost" onclick="exitXj()">离开玄机模式</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
   <!-- ================= 屏 9.5 · 认真三问（中/重推演的前置门槛） ================= -->
@@ -1305,7 +1312,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
     <p style="margin:var(--block-gap) 0 12px"><span class="xj-burn">◌ 本次记录阅后即焚 · 结果仅你可见，请勿截屏分享</span></p>
     <p class="caption" style="margin-bottom:12px;color:var(--track-fate)">7 天后回来看看：你当时听了吗？复盘页「推演回看」会留着这题，只存在这台设备上。</p>
     <button class="btn-primary" id="xj-finish-btn" onclick="finishXj()">收下这个视角，离开</button>
-    <div class="foot-version">SPEC-S1-sandbox v0.8.7 · 体验版 · 全部演示数据，不出本机</div>
+    <div class="foot-version">SPEC-S1-sandbox v0.8.8 · 体验版 · 全部演示数据，不出本机</div>
   </section>
 
 </div><!-- /#phone -->
@@ -1371,9 +1378,9 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption" style="margin-bottom:12px">共 <span class="num" id="fb-count">0</span> 条 · 仅存本机浏览器</p>
       <div id="fb-items"></div>
       <button class="btn-primary" style="margin-top:12px" onclick="sendFeedback()">发送反馈</button>
-      <p class="caption" style="margin-top:8px">优先调起系统分享（手机上可直发微信）；不行就走邮件；再不行自动复制，粘贴发给产品团队即可。</p>
+      <p class="caption" style="margin-top:8px">点发送会把你的反馈复制到剪贴板，粘贴到微信/邮件发给产品团队就能收到——全程不离开本页。</p>
       <p class="export-tip" id="fb-list-tip" style="display:none"></p>
-      <button class="btn-ghost" onclick="exportFb()">其他导出方式（复制 / 邮件 / 下载）</button>
+      <button class="btn-ghost" onclick="exportFb()">其他导出方式（复制 / 下载）</button>
       <button class="btn-ghost" onclick="backToFbEdit()">返回记一笔</button>
       <button class="btn-ghost" onclick="closeFb()">关闭</button>
     </div>
@@ -1383,8 +1390,8 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
       <p class="caption">最稳的办法：点下面「一键复制全部」，然后<strong style="color:var(--accent-gold)">回到微信，粘贴发给产品团队</strong>。（也可以长按文本框 → 全选 → 复制）</p>
       <textarea class="export-area" id="export-text" readonly></textarea>
       <button class="btn-primary" onclick="copyExport()">一键复制全部</button>
-      <!-- v0.8.7 · P2-A：按钮文案由 JS 按 CONTACT_EMAIL 生成，邮箱不再写死在 HTML -->
-      <button class="btn-ghost" id="mail-btn" onclick="mailExport()">用邮件发送</button>
+      <!-- v0.8.8 · P0 热修：mailto 会劫持鸿蒙 WebView 导航成白屏——邮件入口改为「复制后去邮件 App」安全行为 -->
+      <button class="btn-ghost" id="mail-btn" onclick="mailExport()">复制后去邮件 App 发送</button>
       <button class="btn-ghost" onclick="downloadExport()">试试下载 txt（电脑浏览器推荐）</button>
       <p class="export-tip" id="export-tip" style="display:none"></p>
       <button class="btn-ghost" onclick="backToFbList()">返回清单</button>
@@ -1448,7 +1455,7 @@ button:focus-visible,.sim-src:focus-visible,.switch:focus-visible,.gear:focus-vi
 <script>
 "use strict";
 /* ============================================================
- * AETHEL 棱镜 · S1 体验沙箱 v0.8.7
+ * AETHEL 棱镜 · S1 体验沙箱 v0.8.8
  * 分区：①状态与持久化 ②导航 ③引导旅程 ④相似度组件（三分拆）
  *       ⑤打分与回偿 ⑥仪式与主界面 ⑦降级演示 ⑦.5玄机 ⑦.6养成 ⑧反馈面板
  * ============================================================ */
@@ -3148,9 +3155,27 @@ function prismConfirm(msg, cb, yesLabel) {
     document.getElementById("confirm-panel").style.display = "flex";
   } catch (e) { _confirmCb = null; }
 }
+/* v0.8.8 · P0 热修：复用统一确认层的单按钮信息模式（多行文案 + 隐藏「再想想」）——
+   用于「已复制你的反馈」类纯告知场景，全程不离开当前页 */
+function prismInfo(msg, btnLabel, cb) {
+  try {
+    _confirmCb = (typeof cb === "function") ? cb : null;
+    var t = document.getElementById("confirm-text");
+    t.textContent = msg;
+    t.style.whiteSpace = "pre-line";
+    document.getElementById("confirm-yes").textContent = btnLabel || "完成了";
+    document.getElementById("confirm-no").style.display = "none";
+    document.getElementById("confirm-panel").style.display = "flex";
+  } catch (e) { _confirmCb = null; }
+}
 function closeConfirm(runCb) {
   var p = document.getElementById("confirm-panel");
   if (p) p.style.display = "none";
+  /* v0.8.8：复位信息模式（若有），不影响普通确认用法 */
+  var noBtn = document.getElementById("confirm-no");
+  if (noBtn) noBtn.style.display = "";
+  var t = document.getElementById("confirm-text");
+  if (t) t.style.whiteSpace = "";
   var cb = _confirmCb; _confirmCb = null;
   if (runCb && cb) cb();
 }
@@ -3798,7 +3823,7 @@ function isPrismNativeShell() {
     return;
   }
   navigator.serviceWorker.register("sw.js").then(function () {
-    paintSwBadge("✓ 已可离线使用（缓存 v0.8.7 · 版本升级自动换新）");
+    paintSwBadge("✓ 已可离线使用（缓存 v0.8.8 · 版本升级自动换新）");
   }).catch(function () {
     paintSwBadge("离线注册未成功——不影响使用，部署环境允许时会自动激活。");
   });
@@ -3926,7 +3951,7 @@ function buildExportTxt() {
   var list = loadFb();
   var lines = [
     "AETHEL 棱镜 · 体验沙箱反馈导出",
-    "版本：SPEC-S1-sandbox v0.8.7（体验版）",
+    "版本：SPEC-S1-sandbox v0.8.8（体验版）",
     "导出时间：" + fmtTs(new Date().toISOString()),
     "体验者昵称：" + (state.nickname || "（未填）"),
     "「分身有多像你」终点：" + simTotal() + "%（已声明/已验证/已纠偏） · 数据就绪度：" + (state.dataReady || 0) + "% · 镜灵：" + (state.mirrorLit ? "已点亮" : "未点亮"),
@@ -3955,7 +3980,7 @@ function buildSnapshotJson() {
   return JSON.stringify({
     meta: {
       app: "AETHEL 棱镜 · 体验沙箱",
-      version: "SPEC-S1-sandbox v0.8.7（体验版）",
+      version: "SPEC-S1-sandbox v0.8.8（体验版）",
       exportedAt: new Date().toISOString(),
       note: "MVP-24 D4 回收快照：本机 7 个存储键原样导出；真实投喂原文不落盘，快照中仅含抽象特征标签。"
     },
@@ -3975,39 +4000,48 @@ function exportSnapshot() {
   setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   toast("快照已导出——打开看一眼，确认里面没有你喂过的原句");
 }
-/* v0.6 反馈一键发送：navigator.share 优先 → 邮件降级 → 一键复制兜底，最多 2 步 */
+/* v0.8.8 · P0 热修：发送反馈 = 复制剪贴板（clipboard → execCommand 回退）+ 应用内确认层，全程不离开当前页。
+   背景：旧的 navigator.share → mailto 降级链在鸿蒙 WebView 无邮件应用接管时被导航成白屏且回不去（真机实测 P0）。 */
 function copyText(txt, cb) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(txt).then(function () { cb(true); }, function () { cb(false); });
+    navigator.clipboard.writeText(txt).then(function () { cb(true); }, function () { legacyCopy(txt, cb); });
   } else {
-    cb(false);
+    legacyCopy(txt, cb);
   }
+}
+/* v0.8.8：execCommand 回退——鸿蒙 WebView 伪域名（http://prism.local）非安全上下文，clipboard API 不存在 */
+function legacyCopy(txt, cb) {
+  try {
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.style.position = "fixed"; ta.style.left = "-9999px"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    cb(!!ok);
+  } catch (e) { cb(false); }
 }
 function sendFeedback() {
-  var txt = buildExportTxt();
-  if (navigator.share) {
-    navigator.share({ title: "棱镜沙箱体验反馈", text: txt })
-      .then(function () {}, function () { sendFbFallback(txt); });
-  } else {
-    sendFbFallback(txt);
-  }
+  sendFbFallback(buildExportTxt());
 }
+/* v0.8.8 · P0 热修：废除 mailto 导航——复制 + 确认层（含反馈内容预览 + 「完成了」回原页） */
 function sendFbFallback(txt) {
-  /* 降级 1：调起本机邮件 App */
-  try {
-    var body = txt.length > 1500 ? txt.slice(0, 1500) + "\n……（太长被截断，请改用复制）" : txt;
-    location.href = "mailto:" + CONTACT_EMAIL + "?subject=" +
-      encodeURIComponent("棱镜沙箱体验反馈 · " + (state.nickname || "访客")) +
-      "&body=" + encodeURIComponent(body);
-  } catch (e) {}
-  /* 降级 2：同时一键复制兜底，确保最多两步（清单页与成功视图都给出提示） */
   copyText(txt, function (ok) {
-    var msg = ok
-      ? "✓ 已复制，粘贴给" + CONTACT_NAME + "即可（若刚弹出了邮件 App，也可直接发送）"
-      : "若弹出了邮件 App 可直接发送；也可以点下面「其他导出方式」手动复制";
+    var preview = txt.length > 600 ? txt.slice(0, 600) + "\n……（完整内容已在剪贴板里）" : txt;
+    var msg = (ok
+      ? "已复制你的反馈，粘贴到微信/邮件发给我们就能收到。"
+      : "自动复制被系统拦住了——别退出，请手动复制：点「其他导出方式」里的文本框，长按 → 全选 → 复制。") +
+      "\n\n—— 你的反馈内容 ——\n" + preview;
+    prismInfo(msg, "完成了", function () { /* 留在原页，哪里来回哪去 */ });
+    var tipMsg = ok
+      ? "✓ 已复制，粘贴到微信/邮件发给" + CONTACT_NAME + "即可"
+      : "复制被拦住了，请用「其他导出方式」手动复制";
     ["fb-list-tip", "fb-saved-tip"].forEach(function (id) {
       var tip = document.getElementById(id);
-      if (tip) { tip.textContent = msg; tip.style.display = "block"; }
+      if (tip) { tip.textContent = tipMsg; tip.style.display = "block"; }
     });
   });
 }
@@ -4059,14 +4093,14 @@ function showExportTip(msg) {
 var CONTACT_EMAIL = "prism-feedback@example.com"; /* 占位符：对外演示前由负责人替换为真实收件邮箱 */
 var CONTACT_NAME = "产品负责人"; /* 占位符：对外演示前由负责人替换为真实联系人 */
 
-/* 邮件兜底：调起本机邮件 App，正文太长时提示用复制 */
+/* v0.8.8 · P0 热修：mailto 会劫持鸿蒙 WebView 导航成白屏——邮件入口改为复制 + 明示收件邮箱，不离开当前页 */
 function mailExport() {
   var body = buildExportTxt();
-  var shortBody = body.length > 1500 ? body.slice(0, 1500) + "\n……（太长被截断，请改用一键复制）" : body;
-  location.href = "mailto:" + CONTACT_EMAIL + "?subject=" +
-    encodeURIComponent("棱镜沙箱体验反馈 · " + (state.nickname || "访客")) +
-    "&body=" + encodeURIComponent(shortBody);
-  showExportTip("如果没弹出邮件 App，用上面的「一键复制全部」发微信即可");
+  copyText(body, function (ok) {
+    showExportTip(ok
+      ? "✓ 已复制全部反馈——打开你的邮件 App 新建邮件，收件人填 " + CONTACT_EMAIL + "，粘贴正文发送即可"
+      : "自动复制被拦住了——长按上方文本框 → 全选 → 复制，收件人填 " + CONTACT_EMAIL);
+  });
 }
 
 /* ---------- 设置：返回 / 焚毁仪式（v0.7.2 · L2 时刻 · 替换原重置旅程；真闭环：回执逐行对应真实删除） ---------- */
@@ -4519,11 +4553,11 @@ window.addEventListener("storage", function (e) {
 /* ---------- 启动 ---------- */
 buildAuthList();
 buildFbTags();
-/* v0.8.7 · P2-A：邮件按钮文案按占位符 CONTACT_EMAIL 生成 */
+/* v0.8.8 · P0 热修：邮件按钮改为「复制后去邮件 App」安全文案（不再调起 mailto 导航） */
 (function paintMailBtn() {
   try {
     var mb = document.getElementById("mail-btn");
-    if (mb) mb.textContent = "用邮件发送（" + CONTACT_EMAIL + "）";
+    if (mb) mb.textContent = "复制后去邮件 App 发送（收件人：" + CONTACT_EMAIL + "）";
   } catch (e) {}
 })();
 /* v0.8.7 · P2-C：统一确认层事件绑定（确定/再想想/点遮罩取消） */
